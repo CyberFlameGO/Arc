@@ -5,7 +5,7 @@ package arc;
 option java_package = "me.notom3ga.arc.proto";
 option java_outer_classname = "ArcProto";
 
-message Profiler {
+message Profile {
   SystemInfo system = 1;
   MCInfo minecraft = 2;
 
@@ -51,18 +51,17 @@ message Profiler {
     repeated Config configs = 3;
     repeated string plugins = 4;
 
-    enum OnlineMode {
-      UNKNOWN = 0;
-      ENABLED = 1;
-      DISABLED = 2;
-      BUNGEE = 3;
-      VELOCITY = 4;
-    }
-
     message Version {
       string full = 1;
       string api = 2;
       string mc = 3;
+    }
+
+    enum OnlineMode {
+      ENABLED = 0;
+      DISABLED = 1;
+      BUNGEE = 2;
+      VELOCITY = 3;
     }
 
     message Config {

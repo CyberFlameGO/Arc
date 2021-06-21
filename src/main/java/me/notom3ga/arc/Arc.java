@@ -6,6 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import me.notom3ga.arc.commmand.HelpCommand;
 import me.notom3ga.arc.commmand.ProfilerCommand;
+import me.notom3ga.arc.config.Config;
 import me.notom3ga.arc.util.Logger;
 import net.minecraft.commands.CommandListenerWrapper;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
@@ -22,6 +23,8 @@ public class Arc extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        Config.load(this);
 
         ((CraftServer) getServer()).getServer().getCommandDispatcher().a().register(LiteralArgumentBuilder.<CommandListenerWrapper>literal("arc")
                 .requires(listener -> listener.hasPermission(4, "arc.command"))
