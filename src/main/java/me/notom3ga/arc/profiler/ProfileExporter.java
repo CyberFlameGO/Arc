@@ -1,6 +1,8 @@
 package me.notom3ga.arc.profiler;
 
 import com.destroystokyo.paper.PaperConfig;
+import com.google.protobuf.util.JsonFormat;
+import me.notom3ga.arc.Arc;
 import me.notom3ga.arc.profiler.config.ServerConfigs;
 import me.notom3ga.arc.proto.ArcProto;
 import me.notom3ga.arc.util.Logger;
@@ -13,10 +15,13 @@ import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.VirtualMemory;
 import oshi.software.os.OperatingSystem;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ProfileExporter {
 
@@ -70,7 +75,7 @@ public class ProfileExporter {
                                 .build()
                         )
                         .setCpu(ArcProto.Profile.SystemInfo.CPU.newBuilder()
-                                .setModel(processorIdentifier.getModel())
+                                .setModel(processorIdentifier.getName())
                                 .setCores(processor.getPhysicalProcessorCount())
                                 .setThreads(processor.getLogicalProcessorCount())
                                 .setFrequency(processor.getMaxFreq())
@@ -102,5 +107,15 @@ public class ProfileExporter {
                         .build()
                 )
                 .build();
+
+        File file = new File(Arc.getInstance().getDataFolder(), "profile-" + UUID.randomUUID());
+        try {
+            file.createNewFile();
+            try (FileOutputStream stream = new FileOutputStream(file)) {
+                stream.write(JsonFormat.printer().print(profile).getBytes());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

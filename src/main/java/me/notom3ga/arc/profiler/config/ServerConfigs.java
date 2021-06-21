@@ -6,14 +6,10 @@ import me.notom3ga.arc.util.StringUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 public class ServerConfigs {
     public static final String[] allConfigs = new String[] {
@@ -28,26 +24,26 @@ public class ServerConfigs {
 
     public static String getConfig(String config) throws IOException {
         File file = new File(config);
-        String[] hiddenTokens = (String[]) Config.hiddenTokens.toArray();
+
+        Object[] hiddenObjects = Config.hiddenTokens.toArray();
+        String[] hiddenTokens = Arrays.copyOf(hiddenObjects, hiddenObjects.length, String[].class);
 
         if (!file.exists()) {
             throw new IllegalArgumentException(config + " doesn't exist!");
         }
 
         switch (Files.getFileExtension(config)) {
-            case "properties" -> {
-                Properties properties = new Properties();
-                try (FileInputStream stream = new FileInputStream(file)) {
-                    properties.load(stream);
-                }
-                for (String hiddenToken : hiddenTokens) {
-                    properties.remove(hiddenToken);
-                }
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                properties.store(output, "");
-                return Arrays.stream(output.toString().split("\n"))
-                        .filter(line -> !line.startsWith("#") || !StringUtils.containsAny(line, hiddenTokens))
-                        .collect(Collectors.joining("\n"));
+            case "properties", "air" -> {
+                StringBuilder builder = new StringBuilder();
+                Files.readLines(file, StandardCharsets.UTF_8).forEach(line -> {
+                    if (!line.trim().startsWith("#") && !StringUtils.containsAny(StringUtils.substringBefore(line.trim(), "=").trim(), hiddenTokens)) {
+                        if (!builder.isEmpty()) {
+                            builder.append("\n");
+                        }
+                        builder.append(line);
+                    }
+                });
+                return builder.toString();
             }
 
             case "yml" -> {
@@ -64,13 +60,6 @@ public class ServerConfigs {
                     }
                 }
                 return configuration.saveToString();
-            }
-
-            case "air" -> {
-                return Files.readLines(file, StandardCharsets.UTF_8)
-                        .stream()
-                        .filter(line -> !line.trim().startsWith("#") || !StringUtils.containsAny(line.trim(), hiddenTokens))
-                        .collect(Collectors.joining("\n"));
             }
 
             default -> throw new IllegalArgumentException(config + " is not a valid file type.");

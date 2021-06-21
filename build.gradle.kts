@@ -5,6 +5,7 @@ plugins {
     `java-library`
     id("com.google.protobuf") version "0.8.16"
     id("net.minecrell.plugin-yml.bukkit") version "0.4.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 group = "me.notom3ga"
@@ -57,9 +58,18 @@ dependencies {
     compileOnly("io.papermc.paper:paper:1.17-R0.1-SNAPSHOT")
 
     implementation("com.google.protobuf:protobuf-java:3.17.3")
+    implementation("com.google.protobuf:protobuf-java-util:3.17.3")
 }
 
 tasks {
+    shadowJar {
+        archiveFileName.set("${rootProject.name}-${rootProject.version}.jar")
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
+
     processResources {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }

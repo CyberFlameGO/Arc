@@ -11,4 +11,17 @@ public class StringUtils {
 
         return false;
     }
+
+    public static String substringBefore(String str, String separator) {
+        if (!str.isEmpty() && separator != null) {
+            if (separator.length() == 0) {
+                return "";
+            } else {
+                int pos = str.indexOf(separator);
+                return pos == -1 ? str : str.substring(0, pos);
+            }
+        } else {
+            return str;
+        }
+    }
 }

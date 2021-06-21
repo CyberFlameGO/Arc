@@ -13,6 +13,15 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Arc extends JavaPlugin {
+    private static Arc instance;
+
+    public static Arc getInstance() {
+        return instance;
+    }
+
+    public Arc() {
+        instance = this;
+    }
 
     @Override
     public void onEnable() {
