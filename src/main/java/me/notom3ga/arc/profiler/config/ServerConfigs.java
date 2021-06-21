@@ -18,7 +18,8 @@ public class ServerConfigs {
             "spigot.yml",
             "paper.yml",
             "tuinity.yml",
-            "purpur.yml"
+            "purpur.yml",
+            "airplane.air"
     };
 
     public static String getConfig(String config) throws IOException {
@@ -32,7 +33,7 @@ public class ServerConfigs {
         }
 
         switch (Files.getFileExtension(config)) {
-            case "properties" -> {
+            case "properties", "air" -> {
                 StringBuilder builder = new StringBuilder();
                 Files.readLines(file, StandardCharsets.UTF_8).forEach(line -> {
                     if (!line.trim().startsWith("#") && !StringUtils.containsAny(StringUtils.substringBefore(line.trim(), "=").trim(), hiddenTokens)) {

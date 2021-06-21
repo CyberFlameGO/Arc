@@ -37,10 +37,18 @@ public class ProfilerCommand {
     }
 
     private static int start(CommandSender sender) {
+        if (!ProfilingManager.checkCompatibility().isBlank()) {
+            sender.sendMessage(TextComponent.ofChildren(
+                    Component.text("Error: ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
+                    Component.text(ProfilingManager.checkCompatibility(), TextColor.fromHexString("#F1FAEE"))
+            ));
+            return 1;
+        }
+
         if (ProfilingManager.isProfiling()) {
             sender.sendMessage(TextComponent.ofChildren(
                     Component.text("Error: ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
-                    Component.text("A profile is already running", TextColor.fromHexString("#F1FAEE"))
+                    Component.text("A profile is already running.", TextColor.fromHexString("#F1FAEE"))
             ));
             return 1;
         }
@@ -58,7 +66,7 @@ public class ProfilerCommand {
         if (!ProfilingManager.isProfiling()) {
             sender.sendMessage(TextComponent.ofChildren(
                     Component.text("Error: ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
-                    Component.text("A profile is not currently running", TextColor.fromHexString("#F1FAEE"))
+                    Component.text("A profile is not currently running.", TextColor.fromHexString("#F1FAEE"))
             ));
             return 1;
         }
