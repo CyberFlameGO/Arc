@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package arc;
+
+option java_package = "me.notom3ga.arc.proto";
+option java_outer_classname = "ArcProto";
+
+message Profiler {
+  SystemInfo system = 1;
+  MCInfo minecraft = 2;
+
+  message SystemInfo {
+    VMInfo vm = 1;
+    CPU cpu = 2;
+    Memory memory = 3;
+    OS os = 4;
+
+    message VMInfo {
+      string version = 1;
+      string vendor = 2;
+      string vm = 3;
+      string runtimeName = 4;
+      string runtimeVersion = 5;
+      repeated string flags = 6;
+    }
+
+    message CPU {
+      string model = 1;
+      uint32 cores = 2;
+      uint32 threads = 3;
+      uint64 frequency = 4;
+    }
+
+    message Memory {
+      uint64 physical = 1;
+      uint64 swap = 2;
+      uint64 total = 3;
+    }
+
+    message OS {
+      string manufacturer = 1;
+      string family = 2;
+      string version = 3;
+      uint32 bitness = 4;
+    }
+  }
+
+  message MCInfo {
+    Version version = 1;
+    OnlineMode onlineMode = 2;
+    repeated Config configs = 3;
+    repeated string plugins = 4;
+
+    enum OnlineMode {
+      UNKNOWN = 0;
+      ENABLED = 1;
+      DISABLED = 2;
+      BUNGEE = 3;
+      VELOCITY = 4;
+    }
+
+    message Version {
+      string full = 1;
+      string api = 2;
+      string mc = 3;
+    }
+
+    message Config {
+      string file = 1;
+      string content = 2;
+    }
+  }
+}
