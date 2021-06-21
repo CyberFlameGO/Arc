@@ -54,11 +54,18 @@ public class ProfilerCommand {
         }
 
         ProfilingManager.start();
-        sender.sendMessage(TextComponent.ofChildren(
-                Component.text("Arc", TextColor.fromHexString("#1D3557"), TextDecoration.BOLD),
-                Component.text(" >> ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
-                Component.text("Started profiling.", TextColor.fromHexString("#F1FAEE"))
-        ));
+        if (ProfilingManager.isProfiling()) {
+            sender.sendMessage(TextComponent.ofChildren(
+                    Component.text("Arc", TextColor.fromHexString("#1D3557"), TextDecoration.BOLD),
+                    Component.text(" >> ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
+                    Component.text("Started profiling.", TextColor.fromHexString("#F1FAEE"))
+            ));
+        } else {
+            sender.sendMessage(TextComponent.ofChildren(
+                    Component.text("Error: ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
+                    Component.text("Failed to start profiling, check the console for more info", TextColor.fromHexString("#F1FAEE"))
+            ));
+        }
         return 0;
     }
 

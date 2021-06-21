@@ -50,12 +50,15 @@ bukkit {
 repositories {
     mavenCentral()
     maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://jitpack.io")
     mavenLocal()
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT")
     compileOnly("io.papermc.paper:paper:1.17-R0.1-SNAPSHOT")
+
+    implementation("com.github.jvm-profiling-tools:async-profiler:v2.0")
 }
 
 tasks {

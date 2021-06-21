@@ -8,6 +8,7 @@ import me.notom3ga.arc.commmand.GcCommand;
 import me.notom3ga.arc.commmand.HelpCommand;
 import me.notom3ga.arc.commmand.ProfilerCommand;
 import me.notom3ga.arc.config.Config;
+import me.notom3ga.arc.profiler.ProfilingManager;
 import me.notom3ga.arc.util.Logger;
 import net.minecraft.commands.CommandListenerWrapper;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
@@ -54,5 +55,10 @@ public class Arc extends JavaPlugin {
                 )
                 .executes(listener -> HelpCommand.execute(listener.getSource().getBukkitSender()))
         );
+    }
+
+    @Override
+    public void onDisable() {
+        ProfilingManager.stop(false);
     }
 }
