@@ -56,9 +56,6 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT")
     compileOnly("io.papermc.paper:paper:1.17-R0.1-SNAPSHOT")
-
-    implementation("com.google.protobuf:protobuf-java:3.17.3")
-    implementation("com.google.protobuf:protobuf-java-util:3.17.3")
 }
 
 tasks {
@@ -72,5 +69,6 @@ tasks {
 
     processResources {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        exclude("arc/Arc.proto")
     }
 }
