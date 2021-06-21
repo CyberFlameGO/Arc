@@ -69,6 +69,6 @@ tasks {
 
     processResources {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        exclude("arc/Arc.proto")
+        exclude("Arc.proto")
     }
 }

@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-package arc;
-
 option java_package = "me.notom3ga.arc.proto";
 option java_outer_classname = "ArcProto";
 

@@ -32,7 +32,7 @@ public class ProfilerCommand {
     }
 
     private static int info(CommandSender sender) {
-        sender.sendMessage("arc profiler info!");
+        // todo
         return 0;
     }
 
@@ -55,7 +55,7 @@ public class ProfilerCommand {
 
         ProfilingManager.start();
         sender.sendMessage(TextComponent.ofChildren(
-                Component.text("Arc", TextColor.fromHexString("#A8DADC"), TextDecoration.BOLD),
+                Component.text("Arc", TextColor.fromHexString("#1D3557"), TextDecoration.BOLD),
                 Component.text(" >> ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
                 Component.text("Started profiling.", TextColor.fromHexString("#F1FAEE"))
         ));
@@ -73,7 +73,7 @@ public class ProfilerCommand {
 
         ProfilingManager.stop();
         sender.sendMessage(TextComponent.ofChildren(
-                Component.text("Arc", TextColor.fromHexString("#A8DADC"), TextDecoration.BOLD),
+                Component.text("Arc", TextColor.fromHexString("#1D3557"), TextDecoration.BOLD),
                 Component.text(" >> ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
                 Component.text("Stopped profiling: <link>.", TextColor.fromHexString("#F1FAEE"))
         ));

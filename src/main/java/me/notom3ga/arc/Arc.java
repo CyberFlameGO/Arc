@@ -4,6 +4,7 @@ import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import me.notom3ga.arc.commmand.GcCommand;
 import me.notom3ga.arc.commmand.HelpCommand;
 import me.notom3ga.arc.commmand.ProfilerCommand;
 import me.notom3ga.arc.config.Config;
@@ -37,6 +38,9 @@ public class Arc extends JavaPlugin {
 
         ((CraftServer) getServer()).getServer().getCommandDispatcher().a().register(LiteralArgumentBuilder.<CommandListenerWrapper>literal("arc")
                 .requires(listener -> listener.hasPermission(4, "arc.command"))
+                .then(LiteralArgumentBuilder.<CommandListenerWrapper>literal("gc")
+                        .executes(listener -> GcCommand.execute(listener.getSource().getBukkitSender()))
+                )
                 .then(LiteralArgumentBuilder.<CommandListenerWrapper>literal("profiler")
                         .executes(listener -> ProfilerCommand.execute(listener.getSource().getBukkitSender(), ""))
                         .then(RequiredArgumentBuilder.<CommandListenerWrapper, String>argument("option", StringArgumentType.word())
