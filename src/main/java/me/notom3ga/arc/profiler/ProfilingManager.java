@@ -2,7 +2,6 @@ package me.notom3ga.arc.profiler;
 
 import me.notom3ga.arc.Arc;
 
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
 public class ProfilingManager {
@@ -29,21 +28,20 @@ public class ProfilingManager {
         return "";
     }
 
-    public static void start() {
+    public static void start() throws Exception {
         if (profiling || profiler != null) {
             throw new IllegalStateException("A profile is already running!");
         }
 
+        profiling = true;
         profiler = new Profiler();
         try {
             profiler.setup();
-        } catch (IOException e) {
-            e.printStackTrace();
-            stop();
-            return;
+            profiler.start();
+        } catch (Exception e) {
+            stop(false);
+            throw e;
         }
-
-        profiling = true;
     }
 
     public static void stop() {
@@ -54,6 +52,8 @@ public class ProfilingManager {
         if (!profiling || profiler == null) {
             throw new IllegalStateException("A profile is not currently running!");
         }
+
+        profiler.stop();
 
         if (upload) {
             ProfileExporter.exportProfile();

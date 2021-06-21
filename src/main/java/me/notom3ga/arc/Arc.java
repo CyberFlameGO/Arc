@@ -15,15 +15,6 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Arc extends JavaPlugin {
-    private static Arc instance;
-
-    public static Arc getInstance() {
-        return instance;
-    }
-
-    public Arc() {
-        instance = this;
-    }
 
     @Override
     public void onEnable() {
@@ -59,6 +50,8 @@ public class Arc extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        ProfilingManager.stop(false);
+        if (ProfilingManager.isProfiling()) {
+            ProfilingManager.stop(false);
+        }
     }
 }
