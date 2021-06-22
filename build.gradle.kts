@@ -1,4 +1,5 @@
-import com.google.protobuf.gradle.*
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default
 
 plugins {
@@ -8,7 +9,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
-group = "me.notom3ga"
+group = "me.notom3ga.arc"
 version = "1.0"
 
 java {
@@ -68,6 +69,10 @@ tasks {
 
     build {
         dependsOn(shadowJar)
+    }
+
+    withType<JavaCompile> {
+        options.encoding = "UTF-8"
     }
 
     processResources {

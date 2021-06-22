@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Config {
-    public static List<String> hiddenTokens = new ArrayList<>() {{
+    public static String PROFILER_URL = "127.0.0.1:8080";
+    public static List<String> HIDDEN_TOKENS = new ArrayList<>() {{
         add("server-ip");
         add("rcon");
         add("query");
@@ -39,11 +40,13 @@ public class Config {
             return;
         }
 
-        if (!config.contains("config.hidden-tokens")) {
-            config.set("config.hidden-tokens", hiddenTokens);
-        }
+        config.options().copyDefaults(true);
 
-        hiddenTokens = config.getStringList("config.hidden-tokens");
+        PROFILER_URL = config.getString("profiler.url", PROFILER_URL);
+        if (!config.contains("profiler.hidden-tokens")) {
+            config.set("profiler.hidden-tokens", HIDDEN_TOKENS);
+        }
+        HIDDEN_TOKENS = config.getStringList("profiler.hidden-tokens");
 
         try {
             config.save(file);

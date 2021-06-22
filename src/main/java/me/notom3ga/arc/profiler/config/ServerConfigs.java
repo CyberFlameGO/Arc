@@ -25,7 +25,7 @@ public class ServerConfigs {
     public static String getConfig(String config) throws IOException {
         File file = new File(config);
 
-        Object[] hiddenObjects = Config.hiddenTokens.toArray();
+        Object[] hiddenObjects = Config.HIDDEN_TOKENS.toArray();
         String[] hiddenTokens = Arrays.copyOf(hiddenObjects, hiddenObjects.length, String[].class);
 
         if (!file.exists()) {

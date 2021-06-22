@@ -45,7 +45,7 @@ message Profile {
 
   message MinecraftInfo {
     Version version = 1;
-    OnlineMode onlineMode = 2;
+    OnlineMode online_mode = 2;
     repeated Config configs = 3;
     repeated Plugin plugins = 4;
 
