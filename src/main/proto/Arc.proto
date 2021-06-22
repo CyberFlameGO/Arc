@@ -5,7 +5,7 @@ option java_outer_classname = "ArcProto";
 
 message Profile {
   SystemInfo system = 1;
-  MCInfo minecraft = 2;
+  MinecraftInfo minecraft = 2;
 
   message SystemInfo {
     VMInfo vm = 1;
@@ -43,11 +43,11 @@ message Profile {
     }
   }
 
-  message MCInfo {
+  message MinecraftInfo {
     Version version = 1;
     OnlineMode onlineMode = 2;
     repeated Config configs = 3;
-    repeated string plugins = 4;
+    repeated Plugin plugins = 4;
 
     message Version {
       string full = 1;
@@ -65,6 +65,12 @@ message Profile {
     message Config {
       string file = 1;
       string content = 2;
+    }
+
+    message Plugin {
+      string name = 1;
+      string version = 2;
+      string author = 3;
     }
   }
 }
