@@ -14,7 +14,11 @@ import net.minecraft.commands.CommandSourceStack;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class Arc extends JavaPlugin {
+    private Executor executor;
 
     @Override
     public void onEnable() {
@@ -27,24 +31,24 @@ public class Arc extends JavaPlugin {
         }
 
         Config.load(this);
+        executor = Executors.newSingleThreadExecutor();
 
         ((CraftServer) getServer()).getServer().getCommands().getDispatcher().register(LiteralArgumentBuilder.<CommandSourceStack>literal("arc")
-                .requires(listener -> listener.hasPermission(4, "arc.command"))
+                .requires(context -> context.hasPermission(4, "arc.command"))
                 .then(LiteralArgumentBuilder.<CommandSourceStack>literal("gc")
-                        .executes(listener -> GcCommand.execute(listener.getSource().getBukkitSender()))
+                        .executes(context -> command(() -> GcCommand.execute(context.getSource().getBukkitSender())))
                 )
                 .then(LiteralArgumentBuilder.<CommandSourceStack>literal("profiler")
-                        .executes(listener -> ProfilerCommand.execute(listener.getSource().getBukkitSender(), ""))
+                        .executes(context -> command(() -> ProfilerCommand.execute(context.getSource().getBukkitSender(), "")))
                         .then(RequiredArgumentBuilder.<CommandSourceStack, String>argument("option", StringArgumentType.word())
                                 .suggests((context, builder) -> builder
-                                        .suggest("info", new LiteralMessage("View info on the currently running profiler"))
                                         .suggest("start", new LiteralMessage("Start the profiler"))
                                         .suggest("stop", new LiteralMessage("Stop the profiler"))
                                         .buildFuture())
-                                .executes(listener -> ProfilerCommand.execute(listener.getSource().getBukkitSender(), listener.getArgument("option", String.class)))
+                                .executes(context -> command(() -> ProfilerCommand.execute(context.getSource().getBukkitSender(), context.getArgument("option", String.class))))
                         )
                 )
-                .executes(listener -> HelpCommand.execute(listener.getSource().getBukkitSender()))
+                .executes(context -> command(() -> HelpCommand.execute(context.getSource().getBukkitSender())))
         );
     }
 
@@ -53,5 +57,10 @@ public class Arc extends JavaPlugin {
         if (ProfilingManager.isProfiling()) {
             ProfilingManager.stop(false);
         }
+    }
+
+    private int command(Runnable command) {
+        executor.execute(command);
+        return 0;
     }
 }

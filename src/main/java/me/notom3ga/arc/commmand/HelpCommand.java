@@ -20,7 +20,7 @@ public class HelpCommand {
             Component.text("arc gc", TextColor.fromHexString("#457B9D"), TextDecoration.ITALIC),
             Component.newline(),
             Component.text(" <|> ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
-            Component.text("arc profiler [ info | start | stop ]", TextColor.fromHexString("#457B9D"), TextDecoration.ITALIC),
+            Component.text("arc profiler [ start | stop ]", TextColor.fromHexString("#457B9D"), TextDecoration.ITALIC),
             Component.newline(),
             Component.newline(),
             Component.text(" ----- ----- ----- ", TextColor.fromHexString("#F1FAEE")),

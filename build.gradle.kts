@@ -90,7 +90,7 @@ tasks {
 
     processResources {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        exclude("Arc.proto")
+        exclude("arc.proto")
     }
 
     withType<RemapJar> {

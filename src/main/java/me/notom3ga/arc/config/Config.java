@@ -44,7 +44,9 @@ public class Config {
 
         config.options().copyDefaults(true);
 
+        config.addDefault("profiler.url", PROFILER_URL);
         PROFILER_URL = config.getString("profiler.url", PROFILER_URL);
+
         if (!config.contains("profiler.hidden-tokens")) {
             config.set("profiler.hidden-tokens", HIDDEN_TOKENS);
         }

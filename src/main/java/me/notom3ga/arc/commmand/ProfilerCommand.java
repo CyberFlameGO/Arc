@@ -11,38 +11,21 @@ import java.util.Locale;
 
 public class ProfilerCommand {
 
-    public static int execute(CommandSender sender, String option) {
+    public static void execute(CommandSender sender, String option) {
         switch (option.toLowerCase(Locale.ROOT)) {
-            case "info" -> {
-                return info(sender);
-            }
-
-            case "start" -> {
-                return start(sender);
-            }
-
-            case "stop" -> {
-                return stop(sender);
-            }
-
-            default -> {
-                return HelpCommand.execute(sender);
-            }
+            case "start" -> start(sender);
+            case "stop" -> stop(sender);
+            default -> HelpCommand.execute(sender);
         }
     }
 
-    private static int info(CommandSender sender) {
-        // todo
-        return 0;
-    }
-
-    private static int start(CommandSender sender) {
+    private static void start(CommandSender sender) {
         if (!ProfilingManager.checkCompatibility().isBlank()) {
             sender.sendMessage(TextComponent.ofChildren(
                     Component.text("Error: ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
                     Component.text(ProfilingManager.checkCompatibility(), TextColor.fromHexString("#F1FAEE"))
             ));
-            return 1;
+            return;
         }
 
         if (ProfilingManager.isProfiling()) {
@@ -50,7 +33,7 @@ public class ProfilerCommand {
                     Component.text("Error: ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
                     Component.text("A profile is already running.", TextColor.fromHexString("#F1FAEE"))
             ));
-            return 1;
+            return;
         }
 
         try {
@@ -60,7 +43,7 @@ public class ProfilerCommand {
                     Component.text("Error: ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
                     Component.text("Failed to start profiling, " + e.getLocalizedMessage(), TextColor.fromHexString("#F1FAEE"))
             ));
-            return 1;
+            return;
         }
 
         sender.sendMessage(TextComponent.ofChildren(
@@ -68,16 +51,15 @@ public class ProfilerCommand {
                 Component.text(" >> ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
                 Component.text("Started profiling.", TextColor.fromHexString("#F1FAEE"))
         ));
-        return 0;
     }
 
-    private static int stop(CommandSender sender) {
+    private static void stop(CommandSender sender) {
         if (!ProfilingManager.isProfiling()) {
             sender.sendMessage(TextComponent.ofChildren(
                     Component.text("Error: ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
                     Component.text("A profile is not currently running.", TextColor.fromHexString("#F1FAEE"))
             ));
-            return 1;
+            return;
         }
 
         ProfilingManager.stop();
@@ -86,6 +68,5 @@ public class ProfilerCommand {
                 Component.text(" >> ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
                 Component.text("Stopped profiling: <link>.", TextColor.fromHexString("#F1FAEE"))
         ));
-        return 0;
     }
 }

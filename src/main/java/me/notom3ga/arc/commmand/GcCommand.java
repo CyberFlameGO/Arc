@@ -16,7 +16,7 @@ import java.util.List;
 public class GcCommand {
     private static final DecimalFormat DF = new DecimalFormat("#.##");
 
-    public static int execute(CommandSender sender) {
+    public static void execute(CommandSender sender) {
         List<TextComponent> report = new ArrayList<>();
         report.add(TextComponent.ofChildren(
                 Component.newline(),
@@ -70,7 +70,6 @@ public class GcCommand {
 
         Object[] objects = report.toArray();
         sender.sendMessage(TextComponent.ofChildren(Arrays.copyOf(objects, objects.length, TextComponent[].class)));
-        return 0;
     }
 
     private static String formatTime(long millis) {
