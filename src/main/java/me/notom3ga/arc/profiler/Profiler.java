@@ -36,7 +36,7 @@ public class Profiler {
         this.output.toFile().deleteOnExit();
 
         String output = profiler.execute("start,event=wall,alloc=8192,interval=5ms,threads,filter,jstackdepth=1024,jfr,file=" + this.output.toAbsolutePath());
-        profiler.addThread(((CraftServer) Bukkit.getServer()).getServer().getThread());
+        profiler.addThread(((CraftServer) Bukkit.getServer()).getServer().serverThread);
         Thread.getAllStackTraces().keySet().forEach(profiler::addThread);
 
         if ((!output.contains("Started ") || !output.contains(" profiling")) && !output.contains("Profiling started")) {

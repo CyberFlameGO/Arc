@@ -3,6 +3,7 @@ rootProject.name = "Arc"
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        maven("https://repo.jpenilla.xyz/snapshots/")
     }
 
     resolutionStrategy {

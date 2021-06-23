@@ -31,8 +31,10 @@ public class Config {
         YamlConfiguration config = new YamlConfiguration();
 
         try {
-            Files.createDirectories(plugin.getDataFolder().toPath());
-            Files.createFile(file.toPath());
+            if (!file.exists()) {
+                Files.createDirectories(plugin.getDataFolder().toPath());
+                Files.createFile(file.toPath());
+            }
             config.load(file);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();

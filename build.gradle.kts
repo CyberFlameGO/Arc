@@ -1,12 +1,14 @@
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default
+import xyz.jpenilla.specialgradle.task.RemapJar
 
 plugins {
     `java-library`
     id("com.google.protobuf") version "0.8.16"
     id("net.minecrell.plugin-yml.bukkit") version "0.4.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("xyz.jpenilla.special-gradle") version "1.0.0-SNAPSHOT"
 }
 
 group = "me.notom3ga.arc"
@@ -48,6 +50,13 @@ bukkit {
     }
 }
 
+specialGradle {
+    injectRepositories.set(false)
+    injectSpigotDependency.set(false)
+    minecraftVersion.set("1.17")
+    specialSourceVersion.set("1.10.0")
+}
+
 repositories {
     mavenCentral()
     maven("https://papermc.io/repo/repository/maven-public/")
@@ -57,18 +66,22 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT")
-    compileOnly("io.papermc.paper:paper:1.17-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper:1.17-R0.1-SNAPSHOT:mojang-mapped")
 
     implementation("com.github.jvm-profiling-tools:async-profiler:v2.0")
 }
 
 tasks {
-    shadowJar {
+    productionMappedJar {
         archiveFileName.set("${rootProject.name}-${rootProject.version}.jar")
     }
 
+    shadowJar {
+        archiveClassifier.set("dev-all")
+    }
+
     build {
-        dependsOn(shadowJar)
+        dependsOn(productionMappedJar)
     }
 
     withType<JavaCompile> {
@@ -78,5 +91,9 @@ tasks {
     processResources {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         exclude("Arc.proto")
+    }
+
+    withType<RemapJar> {
+        quiet.set(true)
     }
 }

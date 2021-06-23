@@ -10,7 +10,7 @@ import me.notom3ga.arc.commmand.ProfilerCommand;
 import me.notom3ga.arc.config.Config;
 import me.notom3ga.arc.profiler.ProfilingManager;
 import me.notom3ga.arc.util.Logger;
-import net.minecraft.commands.CommandListenerWrapper;
+import net.minecraft.commands.CommandSourceStack;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,14 +28,14 @@ public class Arc extends JavaPlugin {
 
         Config.load(this);
 
-        ((CraftServer) getServer()).getServer().getCommandDispatcher().a().register(LiteralArgumentBuilder.<CommandListenerWrapper>literal("arc")
+        ((CraftServer) getServer()).getServer().getCommands().getDispatcher().register(LiteralArgumentBuilder.<CommandSourceStack>literal("arc")
                 .requires(listener -> listener.hasPermission(4, "arc.command"))
-                .then(LiteralArgumentBuilder.<CommandListenerWrapper>literal("gc")
+                .then(LiteralArgumentBuilder.<CommandSourceStack>literal("gc")
                         .executes(listener -> GcCommand.execute(listener.getSource().getBukkitSender()))
                 )
-                .then(LiteralArgumentBuilder.<CommandListenerWrapper>literal("profiler")
+                .then(LiteralArgumentBuilder.<CommandSourceStack>literal("profiler")
                         .executes(listener -> ProfilerCommand.execute(listener.getSource().getBukkitSender(), ""))
-                        .then(RequiredArgumentBuilder.<CommandListenerWrapper, String>argument("option", StringArgumentType.word())
+                        .then(RequiredArgumentBuilder.<CommandSourceStack, String>argument("option", StringArgumentType.word())
                                 .suggests((context, builder) -> builder
                                         .suggest("info", new LiteralMessage("View info on the currently running profiler"))
                                         .suggest("start", new LiteralMessage("Start the profiler"))
