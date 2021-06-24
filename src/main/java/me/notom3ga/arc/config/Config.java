@@ -56,7 +56,7 @@ public class Config {
             config.save(file);
         } catch (IOException e) {
             e.printStackTrace();
-            Logger.severe("Failed to load config, resetting to defaults");
+            Logger.severe("Failed to save config, resetting to defaults");
         }
     }
 }

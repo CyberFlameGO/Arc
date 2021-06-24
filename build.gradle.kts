@@ -9,6 +9,7 @@ plugins {
     id("net.minecrell.plugin-yml.bukkit") version "0.4.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("xyz.jpenilla.special-gradle") version "1.0.0-SNAPSHOT"
+    id("xyz.jpenilla.run-paper") version "1.0.3"
 }
 
 group = "me.notom3ga.arc"
@@ -57,6 +58,10 @@ specialGradle {
     specialSourceVersion.set("1.10.0")
 }
 
+runPaper {
+    disablePluginJarDetection()
+}
+
 repositories {
     mavenCentral()
     maven("https://papermc.io/repo/repository/maven-public/")
@@ -76,10 +81,6 @@ tasks {
         archiveFileName.set("${rootProject.name}-${rootProject.version}.jar")
     }
 
-    shadowJar {
-        archiveClassifier.set("dev-all")
-    }
-
     build {
         dependsOn(productionMappedJar)
     }
@@ -95,5 +96,11 @@ tasks {
 
     withType<RemapJar> {
         quiet.set(true)
+    }
+
+    runServer {
+        minecraftVersion("1.17")
+        pluginJars(productionMappedJar.flatMap { it.archiveFile })
+        jvmArgs = listOf("-XX:+UnlockDiagnosticVMOptions", "-XX:+DebugNonSafepoints")
     }
 }
