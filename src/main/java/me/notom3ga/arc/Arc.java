@@ -14,6 +14,7 @@ import net.minecraft.commands.CommandSourceStack;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -55,7 +56,10 @@ public class Arc extends JavaPlugin {
     @Override
     public void onDisable() {
         if (ProfilingManager.isProfiling()) {
-            ProfilingManager.stop(false);
+            try {
+                ProfilingManager.stop(false);
+            } catch (IOException ignore) {
+            }
         }
     }
 

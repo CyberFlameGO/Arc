@@ -1,12 +1,15 @@
 package me.notom3ga.arc.commmand;
 
+import me.notom3ga.arc.config.Config;
 import me.notom3ga.arc.profiler.ProfilingManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.CommandSender;
 
+import java.io.IOException;
 import java.util.Locale;
 
 public class ProfilerCommand {
@@ -62,11 +65,22 @@ public class ProfilerCommand {
             return;
         }
 
-        ProfilingManager.stop();
-        sender.sendMessage(TextComponent.ofChildren(
-                Component.text("Arc", TextColor.fromHexString("#1D3557"), TextDecoration.BOLD),
-                Component.text(" >> ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
-                Component.text("Stopped profiling: <link>.", TextColor.fromHexString("#F1FAEE"))
-        ));
+        try {
+            String key = ProfilingManager.stop();
+            String url = Config.URL + (Config.URL.endsWith("/") ? "" : "/") + key;
+
+            sender.sendMessage(TextComponent.ofChildren(
+                    Component.text("Arc", TextColor.fromHexString("#1D3557"), TextDecoration.BOLD),
+                    Component.text(" >> ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
+                    Component.text("Stopped profiling: ", TextColor.fromHexString("#F1FAEE")),
+                    Component.text(url, TextColor.fromHexString("#A8DADC"), TextDecoration.ITALIC).clickEvent(ClickEvent.openUrl(url)),
+                    Component.text(".", TextColor.fromHexString("#F1FAEE"))
+            ));
+        } catch (IOException ignore) {
+            sender.sendMessage(TextComponent.ofChildren(
+                    Component.text("Error: ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
+                    Component.text("Failed to upload profiler contents.", TextColor.fromHexString("#F1FAEE"))
+            ));
+        }
     }
 }

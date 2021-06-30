@@ -5,6 +5,9 @@ import me.notom3ga.arc.Arc;
 import me.notom3ga.arc.profiler.config.ServerConfigs;
 import me.notom3ga.arc.proto.ArcProto;
 import me.notom3ga.arc.util.Logger;
+import me.notom3ga.arc.util.http.BytebinClient;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.spigotmc.SpigotConfig;
@@ -15,10 +18,13 @@ import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.VirtualMemory;
 import oshi.software.os.OperatingSystem;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 public class ProfilingManager {
     private static boolean profiling = false;
@@ -60,16 +66,18 @@ public class ProfilingManager {
         }
     }
 
-    public static void stop() {
-        stop(true);
+    public static String stop() throws IOException {
+        return stop(true);
     }
 
-    public static void stop(boolean upload) {
+    public static String stop(boolean upload) throws IOException {
         if (!profiling || profiler == null) {
             throw new IllegalStateException("A profile is not currently running!");
         }
 
         profiler.stop();
+        profiler = null;
+        profiling = false;
 
         if (upload) {
             SystemInfo system = new SystemInfo();
@@ -166,14 +174,22 @@ public class ProfilingManager {
                     )
                     .build();
 
-            upload(profile);
+            return upload(profile);
         }
-
-        profiler = null;
-        profiling = false;
+        return null;
     }
 
-    private static void upload(ArcProto.Profile profile) {
+    private static final BytebinClient bytebin = new BytebinClient(new OkHttpClient(), "https://bytebin.lucko.me/", "Arc-Profiler");
+    private static final MediaType arcType = MediaType.parse("application/x-arc-profiler");
 
+    private static String upload(ArcProto.Profile profile) throws IOException {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        try (OutputStream out = new GZIPOutputStream(byteOut)) {
+            profile.writeTo(out);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return bytebin.postContent(byteOut.toByteArray(), arcType);
     }
 }
