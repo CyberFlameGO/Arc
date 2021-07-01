@@ -73,7 +73,6 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT")
     compileOnly("io.papermc.paper:paper:1.17-R0.1-SNAPSHOT:mojang-mapped")
 
-    implementation("com.github.jvm-profiling-tools:async-profiler:v2.0")
     implementation("com.squareup.okhttp3:okhttp:3.14.1")
 }
 

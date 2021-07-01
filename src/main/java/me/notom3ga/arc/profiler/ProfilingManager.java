@@ -36,10 +36,6 @@ public class ProfilingManager {
     }
 
     public static String checkCompatibility() {
-        if (!ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-XX:+DebugNonSafepoints")) {
-            return "You must have the flags '-XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints' to use the Arc profiler.";
-        }
-
         if (!(System.getProperty("os.name").equalsIgnoreCase("linux") && System.getProperty("os.arch").equalsIgnoreCase("amd64"))) {
             return "You must be on Linux x86_64 to use the Arc profiler.";
         }
@@ -77,8 +73,6 @@ public class ProfilingManager {
         }
 
         profiler.stop();
-        profiler = null;
-        profiling = false;
 
         if (upload) {
             SystemInfo system = new SystemInfo();
@@ -172,6 +166,7 @@ public class ProfilingManager {
                                     .setPhysical(memory.getTotal())
                                     .setSwap(virtualMemory.getSwapTotal())
                                     .setVirtual(virtualMemory.getVirtualMax())
+                                    .setDebugSymbols(profiler.hasDebugSymbols())
                                     .build()
                             )
                             .setOs(ArcProto.Profile.SystemInfo.OS.newBuilder()
@@ -194,6 +189,9 @@ public class ProfilingManager {
 
             return upload(profile);
         }
+
+        profiler = null;
+        profiling = false;
         return null;
     }
 

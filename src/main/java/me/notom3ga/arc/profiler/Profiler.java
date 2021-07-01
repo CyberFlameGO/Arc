@@ -1,7 +1,9 @@
 package me.notom3ga.arc.profiler;
 
 import me.notom3ga.arc.Arc;
+import me.notom3ga.arc.util.Logger;
 import one.profiler.AsyncProfiler;
+import one.profiler.Feature;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 
@@ -16,6 +18,11 @@ public class Profiler {
     private Path output;
     private AsyncProfiler profiler;
     private long startTime = 0;
+    private boolean debugSymbols = false;
+
+    public boolean hasDebugSymbols() {
+        return this.debugSymbols;
+    }
 
     public void setup() throws IOException {
         URL profilerResource = Arc.class.getClassLoader().getResource("arcAsyncProfiler.so");
@@ -29,13 +36,19 @@ public class Profiler {
         }
 
         profiler = AsyncProfiler.getInstance(profilerPath.toAbsolutePath().toString());
+        debugSymbols = profiler.check(Feature.DEBUG_SYMBOLS);
     }
 
     public void start() throws IOException {
         this.output = Files.createTempFile("arc-", "-output.jfr.tmp");
         this.output.toFile().deleteOnExit();
 
-        String output = profiler.execute("start,event=wall,alloc=8192,interval=5ms,threads,filter,jstackdepth=1024,jfr,file=" + this.output.toAbsolutePath());
+        if (!debugSymbols) {
+            Logger.warn("Debug symbols not found, memory profiling disabled.");
+        }
+
+        String alloc = debugSymbols ? "alloc=8192," : "";
+        String output = profiler.execute("start,event=wall," + alloc + "interval=5ms,threads,filter,jstackdepth=1024,jfr,file=" + this.output.toAbsolutePath());
         profiler.addThread(((CraftServer) Bukkit.getServer()).getServer().serverThread);
         Thread.getAllStackTraces().keySet().forEach(profiler::addThread);
 

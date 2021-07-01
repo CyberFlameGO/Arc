@@ -2,19 +2,18 @@ package me.notom3ga.arc;
 
 import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import me.notom3ga.arc.commmand.GcCommand;
 import me.notom3ga.arc.commmand.HelpCommand;
 import me.notom3ga.arc.commmand.ProfilerCommand;
 import me.notom3ga.arc.config.Config;
 import me.notom3ga.arc.profiler.ProfilingManager;
 import me.notom3ga.arc.util.Logger;
-import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -31,17 +30,21 @@ public class Arc extends JavaPlugin {
             return;
         }
 
+        if (!ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-XX:+DebugNonSafepoints")) {
+            Logger.warn("Please use the flags '-XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints' for optimal profiling.");
+        }
+
         Config.load(this);
         executor = Executors.newSingleThreadExecutor();
 
-        ((CraftServer) getServer()).getServer().getCommands().getDispatcher().register(LiteralArgumentBuilder.<CommandSourceStack>literal("arc")
+        ((CraftServer) getServer()).getServer().getCommands().getDispatcher().register(Commands.literal("arc")
                 .requires(context -> context.hasPermission(4, "arc.command"))
-                .then(LiteralArgumentBuilder.<CommandSourceStack>literal("gc")
+                .then(Commands.literal("gc")
                         .executes(context -> command(() -> GcCommand.execute(context.getSource().getBukkitSender())))
                 )
-                .then(LiteralArgumentBuilder.<CommandSourceStack>literal("profiler")
+                .then(Commands.literal("profiler")
                         .executes(context -> command(() -> ProfilerCommand.execute(context.getSource().getBukkitSender(), "")))
-                        .then(RequiredArgumentBuilder.<CommandSourceStack, String>argument("option", StringArgumentType.word())
+                        .then(Commands.argument("option", StringArgumentType.word())
                                 .suggests((context, builder) -> builder
                                         .suggest("start", new LiteralMessage("Start the profiler"))
                                         .suggest("stop", new LiteralMessage("Stop the profiler"))

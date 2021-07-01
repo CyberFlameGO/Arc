@@ -18,8 +18,8 @@ message Profile {
       string version = 1;
       string vendor = 2;
       string vm = 3;
-      string runtimeName = 4;
-      string runtimeVersion = 5;
+      string runtime_name = 4;
+      string runtime_version = 5;
       repeated string flags = 6;
     }
 
@@ -34,6 +34,7 @@ message Profile {
       uint64 physical = 1;
       uint64 swap = 2;
       uint64 virtual = 3;
+      bool debug_symbols = 4;
     }
 
     message OS {
