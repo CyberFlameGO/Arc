@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Config {
-    public static String URL = "http://127.0.0.1:3000";
+    public static String URL = "http://127.0.0.1:8080";
     public static List<String> HIDDEN_TOKENS = new ArrayList<>() {{
         add("server-ip");
         add("rcon");
