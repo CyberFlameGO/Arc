@@ -21,6 +21,7 @@ import oshi.software.os.OperatingSystem;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,6 +129,27 @@ public class ProfilingManager {
                 );
             }
 
+            long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
+            List<ArcProto.Profile.GC> gcs = new ArrayList<>();
+            for (GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans()) {
+                double averageTime = 0.0;
+                long averageFrequency = 0;
+
+                try {
+                    averageTime = (double) (gc.getCollectionTime() / gc.getCollectionCount());
+                    averageFrequency = (uptime - gc.getCollectionTime()) / gc.getCollectionCount();
+                } catch (ArithmeticException ignore) {
+                }
+
+                gcs.add(ArcProto.Profile.GC.newBuilder()
+                        .setName(gc.getName())
+                        .setTotal(gc.getCollectionCount())
+                        .setTime(averageTime)
+                        .setFrequency(averageFrequency)
+                        .build()
+                );
+            }
+
             ArcProto.Profile profile = ArcProto.Profile.newBuilder()
                     .setSystem(ArcProto.Profile.SystemInfo.newBuilder()
                             .setVm(ArcProto.Profile.SystemInfo.VMInfo.newBuilder()
@@ -172,6 +194,7 @@ public class ProfilingManager {
                             .addAllPlugins(plugins)
                             .build()
                     )
+                    .addAllGcs(gcs)
                     .build();
 
             return upload(profile);

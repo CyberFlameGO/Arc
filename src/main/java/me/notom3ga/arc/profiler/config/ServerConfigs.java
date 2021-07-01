@@ -1,5 +1,6 @@
 package me.notom3ga.arc.profiler.config;
 
+import co.aikar.timings.TimingsManager;
 import com.google.common.io.Files;
 import me.notom3ga.arc.config.Config;
 import me.notom3ga.arc.util.StringUtils;
@@ -9,6 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ServerConfigs {
@@ -25,7 +27,10 @@ public class ServerConfigs {
     public static String getConfig(String config) throws IOException {
         File file = new File(config);
 
-        Object[] hiddenObjects = Config.HIDDEN_TOKENS.toArray();
+        Object[] hiddenObjects = new ArrayList<String>(){{
+            addAll(Config.HIDDEN_TOKENS);
+            addAll(TimingsManager.hiddenConfigs);
+        }}.toArray();
         String[] hiddenTokens = Arrays.copyOf(hiddenObjects, hiddenObjects.length, String[].class);
 
         if (!file.exists()) {
