@@ -45,16 +45,10 @@ message Profile {
   }
 
   message MinecraftInfo {
-    Version version = 1;
+    string version = 1;
     OnlineMode online_mode = 2;
     repeated Config configs = 3;
     repeated Plugin plugins = 4;
-
-    message Version {
-      string full = 1;
-      string api = 2;
-      string mc = 3;
-    }
 
     enum OnlineMode {
       ENABLED = 0;
