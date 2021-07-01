@@ -33,7 +33,7 @@ message Profile {
     message Memory {
       uint64 physical = 1;
       uint64 swap = 2;
-      uint64 total = 3;
+      uint64 virtual = 3;
     }
 
     message OS {

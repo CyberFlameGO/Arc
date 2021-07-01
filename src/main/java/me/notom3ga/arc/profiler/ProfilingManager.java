@@ -171,7 +171,7 @@ public class ProfilingManager {
                             .setMemory(ArcProto.Profile.SystemInfo.Memory.newBuilder()
                                     .setPhysical(memory.getTotal())
                                     .setSwap(virtualMemory.getSwapTotal())
-                                    .setTotal(virtualMemory.getVirtualMax())
+                                    .setVirtual(virtualMemory.getVirtualMax())
                                     .build()
                             )
                             .setOs(ArcProto.Profile.SystemInfo.OS.newBuilder()
