@@ -1,5 +1,6 @@
 package me.notom3ga.arc.profiler;
 
+import me.notom3ga.arc.Arc;
 import me.notom3ga.arc.profiler.monitor.CpuMonitor;
 import me.notom3ga.arc.proto.ArcProto;
 import org.bukkit.Bukkit;
@@ -47,36 +48,38 @@ public class GraphTask extends BukkitRunnable {
                 .build()
         );
 
-        int entityCount = 0;
-        int chunkCount = 0;
-        int blockEntityCount = 0;
-        for (World world : Bukkit.getWorlds()) {
-            entityCount += world.getEntityCount();
-            chunkCount += world.getChunkCount();
-            blockEntityCount += world.getTileEntityCount();
-        }
+        Bukkit.getScheduler().runTask(Arc.getInstance(), () -> {
+            int entityCount = 0;
+            int chunkCount = 0;
+            int blockEntityCount = 0;
+            for (World world : Bukkit.getWorlds()) {
+                entityCount += world.getEntityCount();
+                chunkCount += world.getChunkCount();
+                blockEntityCount += world.getTileEntityCount();
+            }
 
-        this.data.add(ArcProto.Profile.Graph.GraphData.newBuilder()
-                .setId("entities")
-                .setName("Entity Count")
-                .setTime(time)
-                .setData(entityCount)
-                .build()
-        );
-        this.data.add(ArcProto.Profile.Graph.GraphData.newBuilder()
-                .setId("chunks")
-                .setName("Chunk Count")
-                .setTime(time)
-                .setData(chunkCount)
-                .build()
-        );
-        this.data.add(ArcProto.Profile.Graph.GraphData.newBuilder()
-                .setId("block_entities")
-                .setName("Block Entity Count")
-                .setTime(time)
-                .setData(blockEntityCount)
-                .build()
-        );
+            this.data.add(ArcProto.Profile.Graph.GraphData.newBuilder()
+                    .setId("entities")
+                    .setName("Entity Count")
+                    .setTime(time)
+                    .setData(entityCount)
+                    .build()
+            );
+            this.data.add(ArcProto.Profile.Graph.GraphData.newBuilder()
+                    .setId("chunks")
+                    .setName("Chunk Count")
+                    .setTime(time)
+                    .setData(chunkCount)
+                    .build()
+            );
+            this.data.add(ArcProto.Profile.Graph.GraphData.newBuilder()
+                    .setId("block_entities")
+                    .setName("Block Entity Count")
+                    .setTime(time)
+                    .setData(blockEntityCount)
+                    .build()
+            );
+        });
 
         this.data.add(ArcProto.Profile.Graph.GraphData.newBuilder()
                 .setId("process_cpu")
