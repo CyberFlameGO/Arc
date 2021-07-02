@@ -145,6 +145,10 @@ public class ProfilingManager {
             }
 
             ArcProto.Profile profile = ArcProto.Profile.newBuilder()
+                    .setGraph(ArcProto.Profile.Graph.newBuilder()
+                            .addAllData(profiler.getGraphData())
+                            .build()
+                    )
                     .setSystem(ArcProto.Profile.SystemInfo.newBuilder()
                             .setVm(ArcProto.Profile.SystemInfo.VMInfo.newBuilder()
                                     .setVersion(System.getProperty("java.version"))

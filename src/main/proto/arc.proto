@@ -4,9 +4,21 @@ option java_package = "me.notom3ga.arc.proto";
 option java_outer_classname = "ArcProto";
 
 message Profile {
-  SystemInfo system = 1;
-  MinecraftInfo minecraft = 2;
-  repeated GC gcs = 3;
+  Graph graph = 1;
+  SystemInfo system = 2;
+  MinecraftInfo minecraft = 3;
+  repeated GC gcs = 4;
+
+  message Graph {
+    repeated GraphData data = 1;
+
+    message GraphData {
+      string id = 1;
+      string name = 2;
+      uint64 time = 3;
+      double data = 4;
+    }
+  }
 
   message SystemInfo {
     VMInfo vm = 1;

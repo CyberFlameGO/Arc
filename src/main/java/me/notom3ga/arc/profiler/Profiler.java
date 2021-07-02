@@ -1,6 +1,7 @@
 package me.notom3ga.arc.profiler;
 
 import me.notom3ga.arc.Arc;
+import me.notom3ga.arc.proto.ArcProto;
 import me.notom3ga.arc.util.Logger;
 import one.profiler.AsyncProfiler;
 import one.profiler.Feature;
@@ -13,15 +14,20 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 public class Profiler {
     private Path output;
     private AsyncProfiler profiler;
-    private long startTime = 0;
+    private GraphTask graphTask = new GraphTask();
     private boolean debugSymbols = false;
 
     public boolean hasDebugSymbols() {
         return this.debugSymbols;
+    }
+
+    public List<ArcProto.Profile.Graph.GraphData> getGraphData() {
+        return graphTask.getData();
     }
 
     public void setup() throws IOException {
@@ -56,10 +62,11 @@ public class Profiler {
             throw new IOException("Failed to start arc profiler: " + output.trim());
         }
 
-        this.startTime = System.currentTimeMillis();
+        this.graphTask.runTaskTimerAsynchronously(Arc.getInstance(), 40, 40);
     }
 
     public void stop() {
         profiler.stop();
+        this.graphTask.cancel();
     }
 }

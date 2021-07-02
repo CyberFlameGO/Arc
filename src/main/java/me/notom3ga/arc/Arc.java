@@ -7,6 +7,7 @@ import me.notom3ga.arc.commmand.HelpCommand;
 import me.notom3ga.arc.commmand.ProfilerCommand;
 import me.notom3ga.arc.config.Config;
 import me.notom3ga.arc.profiler.ProfilingManager;
+import me.notom3ga.arc.profiler.monitor.CpuMonitor;
 import me.notom3ga.arc.util.Logger;
 import net.minecraft.commands.Commands;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
@@ -18,10 +19,17 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class Arc extends JavaPlugin {
+    private static Arc instance;
+
+    public static Arc getInstance() {
+        return instance;
+    }
+
     private Executor executor;
 
     @Override
     public void onEnable() {
+        instance = this;
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig");
         } catch (ClassNotFoundException e) {
@@ -54,6 +62,8 @@ public class Arc extends JavaPlugin {
                 )
                 .executes(context -> command(() -> HelpCommand.execute(context.getSource().getBukkitSender())))
         );
+
+        CpuMonitor.ensureInitialzation();
     }
 
     @Override
@@ -64,6 +74,7 @@ public class Arc extends JavaPlugin {
             } catch (IOException ignore) {
             }
         }
+        instance = null;
     }
 
     private int command(Runnable command) {
