@@ -59,7 +59,7 @@ public class ProfilerCommand {
                 Component.text("Started profiling, the profiler will stop in 10 minutes.", TextColor.fromHexString("#F1FAEE"))
         ));
 
-        Bukkit.getScheduler().runTaskLaterAsynchronously(Arc.getInstance(), () -> stop(sender), 200);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(Arc.getInstance(), () -> stop(sender), 12000);
     }
 
     private static void stop(CommandSender sender) {
