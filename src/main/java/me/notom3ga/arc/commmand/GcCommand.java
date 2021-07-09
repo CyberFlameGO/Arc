@@ -68,8 +68,7 @@ public class GcCommand {
 
         ));
 
-        Object[] objects = report.toArray();
-        sender.sendMessage(TextComponent.ofChildren(Arrays.copyOf(objects, objects.length, TextComponent[].class)));
+        sender.sendMessage(TextComponent.ofChildren(report.toArray(TextComponent[]::new)));
     }
 
     private static String formatTime(long millis) {

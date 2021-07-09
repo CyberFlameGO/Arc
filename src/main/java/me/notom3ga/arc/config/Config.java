@@ -13,51 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Config {
-    public static String URL = "https://arc.notom3ga.me/";
-    public static List<String> HIDDEN_TOKENS = new ArrayList<>() {{
-        add("server-ip");
-        add("rcon");
-        add("query");
-        add("level-seed");
-        add("database");
-        add("seed-");
-        add("settings.bungeecord-addresses");
-        add("settings.velocity-support.secret");
-        add("worldgen.seeds.populator");
-        add("token");
-    }};
+    public static String URL;
+
+    public static List<String> CONFIGS = List.of("server.properties", "bukkit.yml", "spigot.yml", "paper.yml", "tuinity.yml", "purpur.yml", "airplane.air");
+    public static List<String> HIDDEN_TOKENS;
 
     public static void load(Arc plugin) {
-        File file = new File(plugin.getDataFolder(), "config.yml");
-        YamlConfiguration config = new YamlConfiguration();
+        plugin.saveDefaultConfig();
+        YamlConfiguration config = (YamlConfiguration) plugin.getConfig();
 
-        try {
-            if (!file.exists()) {
-                Files.createDirectories(plugin.getDataFolder().toPath());
-                Files.createFile(file.toPath());
-            }
-            config.load(file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-            Logger.severe("Failed to load config, resetting to defaults");
-            return;
-        }
-
-        config.options().copyDefaults(true);
-
-        config.addDefault("profiler.url", URL);
         URL = config.getString("profiler.url", URL);
+        HIDDEN_TOKENS = config.getStringList("profiler.config.hidden-tokens");
 
-        config.addDefault("profiler.hidden-tokens", HIDDEN_TOKENS);
-        HIDDEN_TOKENS = new ArrayList<>(){{
-            NullUtil.listOrNull(config.getList("profiler.hidden-tokens")).forEach(object -> add(object.toString()));
-        }};
-
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            Logger.severe("Failed to save config, resetting to defaults");
+        if (!config.getStringList("profiler.config.additional-files").isEmpty()) {
+            CONFIGS.addAll(config.getStringList("profiler.config.additional-files"));
         }
     }
 }

@@ -1,6 +1,6 @@
 package me.notom3ga.arc.util;
 
-public class StringUtils {
+public class StringUtil {
 
     public static boolean containsAny(String string, String... toCheck) {
         for (String checking : toCheck) {

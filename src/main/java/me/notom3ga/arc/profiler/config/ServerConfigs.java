@@ -2,7 +2,7 @@ package me.notom3ga.arc.profiler.config;
 
 import co.aikar.timings.TimingsManager;
 import me.notom3ga.arc.config.Config;
-import me.notom3ga.arc.util.StringUtils;
+import me.notom3ga.arc.util.StringUtil;
 import org.apache.logging.log4j.core.util.FileUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,27 +12,16 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ServerConfigs {
-    public static final String[] allConfigs = new String[] {
-            "server.properties",
-            "bukkit.yml",
-            "spigot.yml",
-            "paper.yml",
-            "tuinity.yml",
-            "purpur.yml",
-            "airplane.air"
-    };
 
     public static String getConfig(String config) throws IOException {
         File file = new File(config);
 
-        Object[] hiddenObjects = new ArrayList<String>(){{
+        String[] hiddenTokens = new ArrayList<String>(){{
             addAll(Config.HIDDEN_TOKENS);
             addAll(TimingsManager.hiddenConfigs);
-        }}.toArray();
-        String[] hiddenTokens = Arrays.copyOf(hiddenObjects, hiddenObjects.length, String[].class);
+        }}.toArray(String[]::new);
 
         if (!file.exists()) {
             throw new IllegalArgumentException(config + " doesn't exist!");
@@ -42,7 +31,7 @@ public class ServerConfigs {
             case "properties", "air" -> {
                 StringBuilder builder = new StringBuilder();
                 Files.lines(file.toPath(), StandardCharsets.UTF_8).forEach(line -> {
-                    if (!line.trim().startsWith("#") && !StringUtils.containsAny(StringUtils.substringBefore(line.trim(), "=").trim(), hiddenTokens)) {
+                    if (!line.trim().startsWith("#") && !StringUtil.containsAny(StringUtil.substringBefore(line.trim(), "=").trim(), hiddenTokens)) {
                         if (!builder.isEmpty()) {
                             builder.append("\n");
                         }
@@ -61,7 +50,7 @@ public class ServerConfigs {
                 }
                 configuration.options().header(null);
                 for (String key : configuration.getKeys(true)) {
-                    if (StringUtils.containsAny(key, hiddenTokens)) {
+                    if (StringUtil.containsAny(key, hiddenTokens)) {
                         configuration.set(key, null);
                     }
                 }

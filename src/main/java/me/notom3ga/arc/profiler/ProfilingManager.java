@@ -1,7 +1,9 @@
 package me.notom3ga.arc.profiler;
 
 import com.destroystokyo.paper.PaperConfig;
+import com.google.common.collect.Lists;
 import me.notom3ga.arc.Arc;
+import me.notom3ga.arc.config.Config;
 import me.notom3ga.arc.profiler.config.ServerConfigs;
 import me.notom3ga.arc.proto.ArcProto;
 import me.notom3ga.arc.util.Logger;
@@ -99,7 +101,7 @@ public class ProfilingManager {
             }
 
             List<ArcProto.Profile.Info.Server.Config> configs = new ArrayList<>();
-            for (String config : ServerConfigs.allConfigs) {
+            for (String config : Config.CONFIGS) {
                 try {
                     String contents = ServerConfigs.getConfig(config);
                     configs.add(ArcProto.Profile.Info.Server.Config.newBuilder()

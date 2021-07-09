@@ -5,7 +5,7 @@ import java.util.List;
 
 public class NullUtil {
 
-    public static <T> List<T> listOrNull(List<T> list) {
+    public static <T> List<T> listOrEmpty(List<T> list) {
         if (list == null) {
             return new ArrayList<>();
         }
