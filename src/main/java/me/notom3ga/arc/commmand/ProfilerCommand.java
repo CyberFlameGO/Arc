@@ -1,5 +1,6 @@
 package me.notom3ga.arc.commmand;
 
+import me.notom3ga.arc.Arc;
 import me.notom3ga.arc.config.Config;
 import me.notom3ga.arc.profiler.ProfilingManager;
 import me.notom3ga.arc.util.compat.Compatibility;
@@ -8,6 +9,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import java.io.IOException;
@@ -54,8 +56,10 @@ public class ProfilerCommand {
         sender.sendMessage(TextComponent.ofChildren(
                 Component.text("Arc", TextColor.fromHexString("#1D3557"), TextDecoration.BOLD),
                 Component.text(" >> ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
-                Component.text("Started profiling.", TextColor.fromHexString("#F1FAEE"))
+                Component.text("Started profiling, the profiler will stop in 10 minutes.", TextColor.fromHexString("#F1FAEE"))
         ));
+
+        Bukkit.getScheduler().runTaskLaterAsynchronously(Arc.getInstance(), () -> stop(sender), 200);
     }
 
     private static void stop(CommandSender sender) {

@@ -107,10 +107,10 @@ public class ProfilingManager {
                             .setContent(contents)
                             .build()
                     );
+                } catch (IllegalArgumentException ignored) {
                 } catch (IOException e) {
                     e.printStackTrace();
                     Logger.severe("Failed to get contents of " + config);
-                } catch (IllegalArgumentException ignored) {
                 }
             }
 
@@ -146,6 +146,12 @@ public class ProfilingManager {
             }
 
             ArcProto.Profile profile = ArcProto.Profile.newBuilder()
+                    .setProfiler(ArcProto.Profile.Profiler.newBuilder()
+                            .setMemory(ArcProto.Profile.Profiler.Memory.newBuilder()
+                                    .setDebugSymbols(profiler.hasDebugSymbols())
+                                    .build()
+                            )
+                    )
                     .setInfo(ArcProto.Profile.Info.newBuilder()
                             .setSystem(ArcProto.Profile.Info.System.newBuilder()
                                     .setCpu(ArcProto.Profile.Info.System.CPU.newBuilder()
@@ -153,22 +159,18 @@ public class ProfilingManager {
                                             .setCores(processor.getPhysicalProcessorCount())
                                             .setThreads(processor.getLogicalProcessorCount())
                                             .setFrequency(processor.getMaxFreq())
-                                            .build()
                                     )
                                     .setMemory(ArcProto.Profile.Info.System.Memory.newBuilder()
                                             .setPhysical(memory.getTotal())
                                             .setSwap(virtualMemory.getSwapTotal())
                                             .setVirtual(virtualMemory.getVirtualMax())
-                                            .setDebugSymbols(profiler.hasDebugSymbols())
-                                            .build()
                                     )
                                     .setOs(ArcProto.Profile.Info.System.OS.newBuilder()
                                             .setManufacturer(os.getManufacturer())
                                             .setFamily(os.getFamily())
                                             .setVersion(os.getVersionInfo().toString())
                                             .setBitness(os.getBitness())
-                                            .build()
-                                    ).build()
+                                    )
                             )
                             .setServer(ArcProto.Profile.Info.Server.newBuilder()
                                     .setUptime(uptime)
@@ -177,7 +179,6 @@ public class ProfilingManager {
                                     .addAllConfigs(configs)
                                     .addAllPlugins(plugins)
                                     .addAllGcs(gcs)
-                                    .build()
                             )
                             .setJava(ArcProto.Profile.Info.Java.newBuilder()
                                     .setVersion(System.getProperty("java.version"))
@@ -186,9 +187,8 @@ public class ProfilingManager {
                                     .setRuntimeName(System.getProperty("java.runtime.name"))
                                     .setRuntimeVersion(System.getProperty("java.runtime.version"))
                                     .addAllFlags(ManagementFactory.getRuntimeMXBean().getInputArguments())
-                                    .build()
                             )
-                            .build())
+                    )
                     .build();
 
             return upload(profile);

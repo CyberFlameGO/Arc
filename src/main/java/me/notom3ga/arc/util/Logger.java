@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 public class Logger {
 
     private static void log(TextComponent message) {
-        Bukkit.getServer().sendMessage(TextComponent.ofChildren(
+        Bukkit.getConsoleSender().sendMessage(TextComponent.ofChildren(
                 Component.text("[Arc] ", TextColor.fromHexString("#0A9396")),
                 message
         ));

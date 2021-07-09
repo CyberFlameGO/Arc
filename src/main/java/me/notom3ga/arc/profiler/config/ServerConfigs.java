@@ -1,15 +1,16 @@
 package me.notom3ga.arc.profiler.config;
 
 import co.aikar.timings.TimingsManager;
-import com.google.common.io.Files;
 import me.notom3ga.arc.config.Config;
 import me.notom3ga.arc.util.StringUtils;
+import org.apache.logging.log4j.core.util.FileUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -37,10 +38,10 @@ public class ServerConfigs {
             throw new IllegalArgumentException(config + " doesn't exist!");
         }
 
-        switch (Files.getFileExtension(config)) {
+        switch (FileUtils.getFileExtension(file)) {
             case "properties", "air" -> {
                 StringBuilder builder = new StringBuilder();
-                Files.readLines(file, StandardCharsets.UTF_8).forEach(line -> {
+                Files.lines(file.toPath(), StandardCharsets.UTF_8).forEach(line -> {
                     if (!line.trim().startsWith("#") && !StringUtils.containsAny(StringUtils.substringBefore(line.trim(), "=").trim(), hiddenTokens)) {
                         if (!builder.isEmpty()) {
                             builder.append("\n");

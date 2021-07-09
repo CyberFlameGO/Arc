@@ -1,19 +1,5 @@
 profiler:
-  urls:
-    profiler: https://arc.notom3ga.me/
-    bytebin: https://bytebin.lucko.me/
-  graph:
-    interval: 40
-    data:
-      mspt: true
-      tps: true
-      players: true
-      entities: true
-      chunks: true
-      block-entites: true
-      process-cpu: true
-      system-cpu: true
-      memory: true
+  url: https://arc.notom3ga.me/
   config:
     additional-files: []
     hidden-tokens:

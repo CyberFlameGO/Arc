@@ -9,6 +9,7 @@ message Profile {
 
   message Profiler {
     CPU cpu = 1;
+    Memory memory = 2;
 
     message CPU {
       repeated Thread threads = 1;
@@ -22,6 +23,24 @@ message Profile {
           string class = 1;
           string method = 2;
           uint64 time = 3;
+          repeated Children children = 4;
+        }
+      }
+    }
+
+    message Memory {
+      bool debug_symbols = 1;
+      repeated Thread threads = 2;
+
+      message Thread {
+        string name = 1;
+        uint64 time = 2;
+        repeated Children children = 3;
+
+        message Children {
+          string class = 1;
+          string method = 2;
+          uint64 bytes = 3;
           repeated Children children = 4;
         }
       }
@@ -49,7 +68,6 @@ message Profile {
         uint64 physical = 1;
         uint64 swap = 2;
         uint64 virtual = 3;
-        bool debug_symbols = 4;
       }
 
       message OS {

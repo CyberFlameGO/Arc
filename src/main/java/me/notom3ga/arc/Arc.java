@@ -63,7 +63,7 @@ public class Arc extends JavaPlugin {
                 .executes(context -> command(() -> HelpCommand.execute(context.getSource().getBukkitSender())))
         );
 
-        CpuMonitor.ensureInitialzation();
+        CpuMonitor.ensureInitialization();
     }
 
     @Override

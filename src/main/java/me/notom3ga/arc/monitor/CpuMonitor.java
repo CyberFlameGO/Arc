@@ -19,7 +19,8 @@ public class CpuMonitor {
         }
     }
 
-    public static void ensureInitialzation() {
+    @SuppressWarnings("EmptyMethod")
+    public static void ensureInitialization() {
     }
 
     public static OperatingSystemMXBean getBean() {
