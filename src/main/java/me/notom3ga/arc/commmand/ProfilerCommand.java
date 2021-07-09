@@ -2,6 +2,7 @@ package me.notom3ga.arc.commmand;
 
 import me.notom3ga.arc.config.Config;
 import me.notom3ga.arc.profiler.ProfilingManager;
+import me.notom3ga.arc.util.compat.Compatibility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -23,10 +24,11 @@ public class ProfilerCommand {
     }
 
     private static void start(CommandSender sender) {
-        if (!ProfilingManager.checkCompatibility().isBlank()) {
+        Compatibility compatibility = ProfilingManager.checkCompatibility();
+        if (compatibility != Compatibility.COMPATIBLE) {
             sender.sendMessage(TextComponent.ofChildren(
                     Component.text("Error: ", TextColor.fromHexString("#E63946"), TextDecoration.BOLD),
-                    Component.text(ProfilingManager.checkCompatibility(), TextColor.fromHexString("#F1FAEE"))
+                    Component.text(compatibility.getMessage(), TextColor.fromHexString("#F1FAEE"))
             ));
             return;
         }

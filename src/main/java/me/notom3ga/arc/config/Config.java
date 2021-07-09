@@ -2,6 +2,7 @@ package me.notom3ga.arc.config;
 
 import me.notom3ga.arc.Arc;
 import me.notom3ga.arc.util.Logger;
+import me.notom3ga.arc.util.NullUtil;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -13,6 +14,7 @@ import java.util.List;
 
 public class Config {
     public static String URL = "https://arc.notom3ga.me/";
+    public static String BYTEBIN = "https://bytebin.lucko.me/";
     public static List<String> HIDDEN_TOKENS = new ArrayList<>() {{
         add("server-ip");
         add("rcon");
@@ -47,10 +49,11 @@ public class Config {
         config.addDefault("profiler.url", URL);
         URL = config.getString("profiler.url", URL);
 
-        if (!config.contains("profiler.hidden-tokens")) {
-            config.set("profiler.hidden-tokens", HIDDEN_TOKENS);
-        }
-        HIDDEN_TOKENS = config.getStringList("profiler.hidden-tokens");
+        config.addDefault("profiler.bytebin", BYTEBIN);
+        BYTEBIN = config.getString("profiler.bytebin", BYTEBIN);
+
+        config.addDefault("profiler.hidden-tokens", HIDDEN_TOKENS);
+        HIDDEN_TOKENS = new ArrayList<>(){{ NullUtil.listOrNull(config.getList("profiler.hidden-tokens")).forEach(object -> add(object.toString())); }};
 
         try {
             config.save(file);

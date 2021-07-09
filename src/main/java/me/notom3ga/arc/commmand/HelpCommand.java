@@ -31,8 +31,7 @@ public class HelpCommand {
             Component.newline()
     );
 
-    public static int execute(CommandSender sender) {
+    public static void execute(CommandSender sender) {
         sender.sendMessage(help);
-        return 0;
     }
 }

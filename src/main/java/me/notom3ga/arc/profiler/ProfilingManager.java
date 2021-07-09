@@ -5,6 +5,7 @@ import me.notom3ga.arc.Arc;
 import me.notom3ga.arc.profiler.config.ServerConfigs;
 import me.notom3ga.arc.proto.ArcProto;
 import me.notom3ga.arc.util.Logger;
+import me.notom3ga.arc.util.compat.Compatibility;
 import me.notom3ga.arc.util.http.BytebinClient;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -35,16 +36,16 @@ public class ProfilingManager {
         return profiling;
     }
 
-    public static String checkCompatibility() {
+    public static Compatibility checkCompatibility() {
         if (!(System.getProperty("os.name").equalsIgnoreCase("linux") && System.getProperty("os.arch").equalsIgnoreCase("amd64"))) {
-            return "You must be on Linux x86_64 to use the Arc profiler.";
+            return Compatibility.OS;
         }
 
         if (Arc.class.getClassLoader().getResource("arcAsyncProfiler.so") == null) {
-            return "Could not find the async profiler in the Arc jar.";
+            return Compatibility.PROFILER_NOT_FOUND;
         }
 
-        return "";
+        return Compatibility.COMPATIBLE;
     }
 
     public static void start() throws Exception {
@@ -85,23 +86,23 @@ public class ProfilingManager {
             GlobalMemory memory = hardware.getMemory();
             VirtualMemory virtualMemory = memory.getVirtualMemory();
 
-            ArcProto.Profile.MinecraftInfo.OnlineMode onlineMode = Bukkit.getOnlineMode()
-                    ? ArcProto.Profile.MinecraftInfo.OnlineMode.ENABLED : ArcProto.Profile.MinecraftInfo.OnlineMode.DISABLED;
-            if (onlineMode == ArcProto.Profile.MinecraftInfo.OnlineMode.DISABLED) {
+            ArcProto.Profile.Info.Server.OnlineMode onlineMode = Bukkit.getOnlineMode()
+                    ? ArcProto.Profile.Info.Server.OnlineMode.ENABLED : ArcProto.Profile.Info.Server.OnlineMode.DISABLED;
+            if (onlineMode == ArcProto.Profile.Info.Server.OnlineMode.DISABLED) {
                 if (SpigotConfig.bungee && PaperConfig.bungeeOnlineMode) {
-                    onlineMode = ArcProto.Profile.MinecraftInfo.OnlineMode.BUNGEE;
+                    onlineMode = ArcProto.Profile.Info.Server.OnlineMode.BUNGEE;
                 }
 
                 if (PaperConfig.velocitySupport && PaperConfig.velocityOnlineMode) {
-                    onlineMode = ArcProto.Profile.MinecraftInfo.OnlineMode.VELOCITY;
+                    onlineMode = ArcProto.Profile.Info.Server.OnlineMode.VELOCITY;
                 }
             }
 
-            List<ArcProto.Profile.MinecraftInfo.Config> configs = new ArrayList<>();
+            List<ArcProto.Profile.Info.Server.Config> configs = new ArrayList<>();
             for (String config : ServerConfigs.allConfigs) {
                 try {
                     String contents = ServerConfigs.getConfig(config);
-                    configs.add(ArcProto.Profile.MinecraftInfo.Config.newBuilder()
+                    configs.add(ArcProto.Profile.Info.Server.Config.newBuilder()
                             .setFile(config)
                             .setContent(contents)
                             .build()
@@ -113,9 +114,9 @@ public class ProfilingManager {
                 }
             }
 
-            List<ArcProto.Profile.MinecraftInfo.Plugin> plugins = new ArrayList<>();
+            List<ArcProto.Profile.Info.Server.Plugin> plugins = new ArrayList<>();
             for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-                plugins.add(ArcProto.Profile.MinecraftInfo.Plugin.newBuilder()
+                plugins.add(ArcProto.Profile.Info.Server.Plugin.newBuilder()
                         .setName(plugin.getDescription().getName())
                         .setVersion(plugin.getDescription().getVersion())
                         .setAuthor(String.join(", ", plugin.getDescription().getAuthors()))
@@ -124,7 +125,7 @@ public class ProfilingManager {
             }
 
             long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
-            List<ArcProto.Profile.GC> gcs = new ArrayList<>();
+            List<ArcProto.Profile.Info.Server.GC> gcs = new ArrayList<>();
             for (GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans()) {
                 double averageTime = 0.0;
                 long averageFrequency = 0;
@@ -135,7 +136,7 @@ public class ProfilingManager {
                 } catch (ArithmeticException ignore) {
                 }
 
-                gcs.add(ArcProto.Profile.GC.newBuilder()
+                gcs.add(ArcProto.Profile.Info.Server.GC.newBuilder()
                         .setName(gc.getName())
                         .setTotal(gc.getCollectionCount())
                         .setTime(averageTime)
@@ -145,12 +146,40 @@ public class ProfilingManager {
             }
 
             ArcProto.Profile profile = ArcProto.Profile.newBuilder()
-                    .setGraph(ArcProto.Profile.Graph.newBuilder()
-                            .addAllData(profiler.getGraphData())
-                            .build()
-                    )
-                    .setSystem(ArcProto.Profile.SystemInfo.newBuilder()
-                            .setVm(ArcProto.Profile.SystemInfo.VMInfo.newBuilder()
+                    .setInfo(ArcProto.Profile.Info.newBuilder()
+                            .setSystem(ArcProto.Profile.Info.System.newBuilder()
+                                    .setCpu(ArcProto.Profile.Info.System.CPU.newBuilder()
+                                            .setModel(processorIdentifier.getName())
+                                            .setCores(processor.getPhysicalProcessorCount())
+                                            .setThreads(processor.getLogicalProcessorCount())
+                                            .setFrequency(processor.getMaxFreq())
+                                            .build()
+                                    )
+                                    .setMemory(ArcProto.Profile.Info.System.Memory.newBuilder()
+                                            .setPhysical(memory.getTotal())
+                                            .setSwap(virtualMemory.getSwapTotal())
+                                            .setVirtual(virtualMemory.getVirtualMax())
+                                            .setDebugSymbols(profiler.hasDebugSymbols())
+                                            .build()
+                                    )
+                                    .setOs(ArcProto.Profile.Info.System.OS.newBuilder()
+                                            .setManufacturer(os.getManufacturer())
+                                            .setFamily(os.getFamily())
+                                            .setVersion(os.getVersionInfo().toString())
+                                            .setBitness(os.getBitness())
+                                            .build()
+                                    ).build()
+                            )
+                            .setServer(ArcProto.Profile.Info.Server.newBuilder()
+                                    .setUptime(uptime)
+                                    .setVersion(Bukkit.getVersion())
+                                    .setOnlineMode(onlineMode)
+                                    .addAllConfigs(configs)
+                                    .addAllPlugins(plugins)
+                                    .addAllGcs(gcs)
+                                    .build()
+                            )
+                            .setJava(ArcProto.Profile.Info.Java.newBuilder()
                                     .setVersion(System.getProperty("java.version"))
                                     .setVendor(System.getProperty("java.vendor"))
                                     .setVm(System.getProperty("java.vm.name"))
@@ -159,36 +188,7 @@ public class ProfilingManager {
                                     .addAllFlags(ManagementFactory.getRuntimeMXBean().getInputArguments())
                                     .build()
                             )
-                            .setCpu(ArcProto.Profile.SystemInfo.CPU.newBuilder()
-                                    .setModel(processorIdentifier.getName())
-                                    .setCores(processor.getPhysicalProcessorCount())
-                                    .setThreads(processor.getLogicalProcessorCount())
-                                    .setFrequency(processor.getMaxFreq())
-                                    .build()
-                            )
-                            .setMemory(ArcProto.Profile.SystemInfo.Memory.newBuilder()
-                                    .setPhysical(memory.getTotal())
-                                    .setSwap(virtualMemory.getSwapTotal())
-                                    .setVirtual(virtualMemory.getVirtualMax())
-                                    .setDebugSymbols(profiler.hasDebugSymbols())
-                                    .build()
-                            )
-                            .setOs(ArcProto.Profile.SystemInfo.OS.newBuilder()
-                                    .setManufacturer(os.getManufacturer())
-                                    .setFamily(os.getFamily())
-                                    .setVersion(os.getVersionInfo().toString())
-                                    .setBitness(os.getBitness())
-                                    .build()
-                            ).build()
-                    )
-                    .setMinecraft(ArcProto.Profile.MinecraftInfo.newBuilder()
-                            .setVersion(Bukkit.getVersion())
-                            .setOnlineMode(onlineMode)
-                            .addAllConfigs(configs)
-                            .addAllPlugins(plugins)
-                            .build()
-                    )
-                    .addAllGcs(gcs)
+                            .build())
                     .build();
 
             return upload(profile);
@@ -200,7 +200,7 @@ public class ProfilingManager {
     }
 
     private static final BytebinClient bytebin = new BytebinClient(new OkHttpClient(), "https://bytebin.lucko.me/", "Arc-Profiler");
-    private static final MediaType arcType = MediaType.parse("application/x-arc-profiler");
+    private static final MediaType type = MediaType.parse("application/x-arc-profiler");
 
     private static String upload(ArcProto.Profile profile) throws IOException {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -210,6 +210,6 @@ public class ProfilingManager {
             throw new RuntimeException(e);
         }
 
-        return bytebin.postContent(byteOut.toByteArray(), arcType);
+        return bytebin.postContent(byteOut.toByteArray(), type);
     }
 }

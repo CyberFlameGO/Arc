@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package one.profiler;
+package me.notom3ga.arc.profiler.async;
 
 /**
  * Features to check for {@link AsyncProfiler#check(String)}

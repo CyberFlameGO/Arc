@@ -7,7 +7,7 @@ import me.notom3ga.arc.commmand.HelpCommand;
 import me.notom3ga.arc.commmand.ProfilerCommand;
 import me.notom3ga.arc.config.Config;
 import me.notom3ga.arc.profiler.ProfilingManager;
-import me.notom3ga.arc.profiler.monitor.CpuMonitor;
+import me.notom3ga.arc.monitor.CpuMonitor;
 import me.notom3ga.arc.util.Logger;
 import net.minecraft.commands.Commands;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;

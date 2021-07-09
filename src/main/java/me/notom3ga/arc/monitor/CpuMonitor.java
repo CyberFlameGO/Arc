@@ -1,4 +1,4 @@
-package me.notom3ga.arc.profiler.monitor;
+package me.notom3ga.arc.monitor;
 
 import javax.management.JMX;
 import javax.management.MBeanServer;

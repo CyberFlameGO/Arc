@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package one.profiler;
+package me.notom3ga.arc.profiler.async;
 
 /**
  * Predefined event names to use in {@link AsyncProfiler#start(String, long)}

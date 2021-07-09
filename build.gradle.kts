@@ -53,7 +53,7 @@ bukkit {
 specialGradle {
     injectRepositories.set(false)
     injectSpigotDependency.set(false)
-    minecraftVersion.set("1.17")
+    minecraftVersion.set("1.17.1")
     specialSourceVersion.set("1.10.0")
 }
 
@@ -69,19 +69,31 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT")
-    compileOnly("io.papermc.paper:paper:1.17-R0.1-SNAPSHOT:mojang-mapped")
+    compileOnly("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper:1.17.1-R0.1-SNAPSHOT:mojang-mapped")
 
     implementation("com.squareup.okhttp3:okhttp:3.14.1")
 }
 
 tasks {
+    shadowJar {
+        archiveFileName.set("${rootProject.name}-${rootProject.version}-mojang-mapped.jar")
+        archiveClassifier.set("mojang-mapped")
+        minimize()
+    }
+
     productionMappedJar {
+        dependsOn(shadowJar)
+        inputJar.set(shadowJar.flatMap { it.archiveFile })
         archiveFileName.set("${rootProject.name}-${rootProject.version}.jar")
     }
 
     build {
         dependsOn(productionMappedJar)
+    }
+
+    jar {
+        enabled = false
     }
 
     withType<JavaCompile> {
@@ -93,12 +105,8 @@ tasks {
         exclude("arc.proto")
     }
 
-    withType<RemapJar> {
-        quiet.set(true)
-    }
-
     runServer {
-        minecraftVersion("1.17")
+        minecraftVersion("1.17.1")
         pluginJars(productionMappedJar.flatMap { it.archiveFile })
         jvmArgs = listOf("-XX:+UnlockDiagnosticVMOptions", "-XX:+DebugNonSafepoints")
     }
