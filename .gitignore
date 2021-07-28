@@ -1,21 +1,47 @@
-.idea/
-*.iml
-modules.xml
-.idea/misc.xml
-*.ipr
-
-*.class
-*.log
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-hs_err_pid*
-
-.gradle
+.gradle/
 build/
-!gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Eclipse stuff
+.classpath
+.project
+.settings/
+
+# VSCode stuff
+.vscode/
+
+# netbeans
+nbproject/
+nbactions.xml
+
+# we use maven!
+build.xml
+
+# maven
+target/
+dependency-reduced-pom.xml
+
+# vim
+.*.sw[a-p]
+
+# various other potential build files
+bin/
+dist/
+manifest.mf
+
+# Mac filesystem dust
+.DS_Store/
+.DS_Store
+
+# intellij
+*.iml
+*.ipr
+*.iws
+.idea/
+out/
+
+# Linux temp files
+*~
+
+# other stuff
 run/

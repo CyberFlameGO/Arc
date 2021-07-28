@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+package me.notom3ga.arc.proto;
+option java_package = "me.notom3ga.arc.proto";
+option java_outer_classname = "Proto";
+
+message Profile {
+  Profiler profiler = 1;
+  Application application = 2;
+  OS operating_system = 3;
+  Hardware hardware = 4;
+  Java java = 5;
+
+  message Profiler {
+    CPU cpu = 1;
+    Memory memory = 2;
+
+    message CPU {
+      repeated Thread threads = 1;
+
+      message Thread {
+        string name = 1;
+        uint64 time = 2;
+        repeated Children children = 3;
+
+        message Children {
+          string class = 1;
+          string method = 2;
+          uint64 time = 3;
+          repeated Children children = 4;
+        }
+      }
+    }
+
+    message Memory {
+      repeated Thread threads = 1;
+
+      message Thread {
+        string name = 1;
+        uint64 bytes = 2;
+        repeated Children children = 3;
+
+        message Children {
+          string class = 1;
+          string method = 2;
+          uint64 bytes = 3;
+          repeated Children children = 4;
+        }
+      }
+    }
+  }
+
+  message Application {
+    uint64 uptime = 1;
+    string version = 2;
+    repeated Config config_files = 3;
+    map<string, string> extras = 4;
+
+    message Config {
+      string file = 1;
+      string content = 2;
+    }
+  }
+
+  message OS {
+    string manufacturer = 1;
+    string family = 2;
+    string version = 3;
+    uint32 bits = 4;
+  }
+
+  message Hardware {
+    Processor processor = 1;
+    Memory memory = 2;
+
+    message Processor {
+      string model = 1;
+      uint32 cores = 2;
+      uint32 threads = 3;
+      uint64 frequency = 4;
+    }
+
+    message Memory {
+      uint64 physical = 1;
+      uint64 swap = 2;
+    }
+  }
+
+  message Java {
+    JVM jvm = 1;
+    repeated GarbageCollection gcs = 2;
+
+    message JVM {
+      string version = 1;
+      string vendor = 2;
+      string vm = 3;
+      string runtime_name = 4;
+      string runtime_version = 5;
+      repeated string flags = 6;
+    }
+
+    message GarbageCollection {
+      string name = 1;
+      uint64 total = 2;
+      double time = 3;
+      uint64 frequency = 4;
+    }
+  }
+}
