@@ -11,3 +11,7 @@ pluginManagement {
 }
 
 include("profiler")
+include("minecraft")
+
+include("minecraft:common")
+findProject(":minecraft:common")?.name = "minecraft-common"

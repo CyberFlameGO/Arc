@@ -5,6 +5,11 @@ plugins {
     id("com.google.protobuf") version "0.8.16"
 }
 
+java {
+    targetCompatibility = JavaVersion.toVersion(11)
+    sourceCompatibility = JavaVersion.toVersion(11)
+}
+
 sourceSets {
     main {
         java {
@@ -25,12 +30,15 @@ protobuf {
 
 dependencies {
     compileOnly("com.google.protobuf:protobuf-java:3.17.3")
-    compileOnly("com.google.protobuf:protobuf-java-utils:3.17.3")
-    implementation("com.eclipsesource.minimal-json:minimal-json:0.9.5")
+    compileOnly("com.eclipsesource.minimal-json:minimal-json:0.9.5")
     compileOnly("com.github.oshi:oshi-core-java11:5.8.0")
 }
 
 tasks {
+    jar {
+        enabled = false
+    }
+
     processResources {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         exclude("arc.proto")
