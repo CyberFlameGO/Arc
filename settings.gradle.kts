@@ -15,3 +15,5 @@ include("minecraft")
 
 include("minecraft:common")
 findProject(":minecraft:common")?.name = "minecraft-common"
+include("minecraft:universal")
+findProject(":minecraft:universal")?.name = "minecraft-universal"

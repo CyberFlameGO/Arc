@@ -20,14 +20,14 @@ allprojects {
     }
 }
 
-tasks {
-    jar {
-        enabled = false
-    }
-}
-
 subprojects {
     repositories {
         mavenCentral()
+    }
+}
+
+tasks {
+    jar {
+        enabled = false
     }
 }

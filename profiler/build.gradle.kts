@@ -35,12 +35,8 @@ dependencies {
 }
 
 tasks {
-    jar {
-        enabled = false
-    }
-
     processResources {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        exclude("arc.proto")
+        exclude("*.proto")
     }
 }
