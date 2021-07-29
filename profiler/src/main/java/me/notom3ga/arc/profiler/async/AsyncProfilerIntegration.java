@@ -49,7 +49,7 @@ public class AsyncProfilerIntegration {
         }
 
         if (running) {
-            throw new IllegalStateException("Arc is already running.");
+            throw new IllegalStateException("Arc profiler is already running.");
         }
 
         outputFile = Files.createTempFile("arc-", ".jfr.tmp");
@@ -67,6 +67,10 @@ public class AsyncProfilerIntegration {
     }
 
     public Path stop() {
+        if (!running) {
+            throw new IllegalStateException("Arc profiler is not currently running.");
+        }
+
         running = false;
         profiler.stop();
         return this.outputFile;

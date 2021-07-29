@@ -14,6 +14,7 @@ import java.util.TimerTask;
 public class GraphCollectors {
     private final List<GraphCollector> collectors = new ArrayList<>();
     private final Timer timer = new Timer();
+    private boolean running = false;
 
     public GraphCollectors() {
         collectors.add(new AllocatedMemoryCollector());
@@ -31,10 +32,18 @@ public class GraphCollectors {
     }
 
     public void start(ArcConfig config) {
+        if (running) {
+            throw new IllegalStateException("Arc graph data is already running.");
+        }
+
         timer.schedule(new GraphDataTask(), 0, config.graphFrequency());
     }
 
     public void stop() {
+        if (!running) {
+            throw new IllegalStateException("Arc graph data is not currently running.");
+        }
+
         timer.cancel();
     }
 
