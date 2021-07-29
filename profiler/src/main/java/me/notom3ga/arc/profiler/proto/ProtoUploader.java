@@ -3,6 +3,7 @@ package me.notom3ga.arc.profiler.proto;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import me.notom3ga.arc.profiler.ArcConfig;
+import me.notom3ga.arc.profiler.graph.GraphCollectors;
 import me.notom3ga.arc.proto.Proto;
 
 import java.io.ByteArrayOutputStream;
@@ -12,20 +13,17 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.zip.GZIPOutputStream;
 
 public class ProtoUploader {
 
-    public static UploadResult upload(ArcConfig config) throws IOException, InterruptedException {
-        return upload(config, null);
-    }
-
-    public static UploadResult upload(ArcConfig config, Proto.Profile.Profiler profiler) throws IOException, InterruptedException {
+    public static UploadResult upload(ArcConfig config, Path output, GraphCollectors collectors) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 
         Proto.Profile profile = Proto.Profile.newBuilder()
-                .setProfiler(profiler)
+                .setProfiler(ProtoGenerator.generateProfiler(output, collectors))
                 .setApplication(ProtoGenerator.generateApplication(config))
                 .setOperatingSystem(ProtoGenerator.generateOperatingSystem())
                 .setHardware(ProtoGenerator.generateHardware())
@@ -38,7 +36,7 @@ public class ProtoUploader {
         }
 
         String response = client.send(HttpRequest.newBuilder()
-                .uri(URI.create(config.url() + (!config.url().endsWith("/") ? "/" : "")))
+                .uri(URI.create(config.url() + (config.url().endsWith("/") ? "" : "/") + "api/new"))
                 .header("Content-Type", "application/x-arc-profiler")
                 .header("User-Agent", "arc-profiler")
                 .POST(HttpRequest.BodyPublishers.ofByteArray(data.toByteArray()))

@@ -1,0 +1,19 @@
+[profiler]
+  url = "https://arc.notom3ga.me"
+  interval = 5
+
+[config]
+  additional = []
+  hidden-tokens = [
+    "seed",
+    "server-ip",
+    "rcon",
+    "query",
+    "database",
+    "settings.bungeecord-addresses",
+    "settings.velocity-support.secret",
+    "token"
+  ]
+
+[graph]
+  frequency = 2000

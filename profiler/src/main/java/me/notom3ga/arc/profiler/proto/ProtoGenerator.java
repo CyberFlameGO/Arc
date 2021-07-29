@@ -1,6 +1,7 @@
 package me.notom3ga.arc.profiler.proto;
 
 import me.notom3ga.arc.profiler.ArcConfig;
+import me.notom3ga.arc.profiler.graph.GraphCollectors;
 import me.notom3ga.arc.profiler.util.FileUtils;
 import me.notom3ga.arc.profiler.util.StringUtils;
 import me.notom3ga.arc.proto.Proto;
@@ -23,6 +24,32 @@ import java.util.List;
 public class ProtoGenerator {
     private static final SystemInfo system = new SystemInfo();
 
+    public static Proto.Profile.Profiler generateProfiler(Path output, GraphCollectors collectors) {
+        List<Proto.Profile.Profiler.Graph.Category> categories = new ArrayList<>();
+        collectors.allCollectors().forEach(collector -> {
+            List<Proto.Profile.Profiler.Graph.Category.DataPoint> dataPoints = new ArrayList<>();
+            collector.data().forEach((time, data) -> dataPoints.add(Proto.Profile.Profiler.Graph.Category.DataPoint.newBuilder()
+                    .setTime(time)
+                    .setData(data)
+                    .build()));
+
+            categories.add(Proto.Profile.Profiler.Graph.Category.newBuilder()
+                    .setName(collector.name())
+                    .setDataType(collector.type())
+                    .setFormat(collector.format())
+                    .addAllData(dataPoints)
+                    .build()
+            );
+        });
+
+        return Proto.Profile.Profiler.newBuilder()
+                .setGraph(Proto.Profile.Profiler.Graph.newBuilder()
+                        .addAllCategories(categories)
+                        .build()
+                )
+                .build();
+    }
+
     public static Proto.Profile.Application generateApplication(ArcConfig config) {
         List<Proto.Profile.Application.Config> configs = new ArrayList<>();
         for (Path path : config.configFiles()) {
@@ -44,11 +71,11 @@ public class ProtoGenerator {
 
     private static Proto.Profile.Application.Config readConfig(Path path, List<String> hiddenTokens) throws IOException {
         if (!Files.exists(path) || Files.isRegularFile(path)) {
-            throw new FileNotFoundException(path.toAbsolutePath().toString() + " is not valid");
+            throw new FileNotFoundException(path.toAbsolutePath() + " is not valid");
         }
 
         String contents;
-        switch (FileUtils.getFileExtension(path)) {
+        switch (FileUtils.fileExtension(path)) {
             case "properties":
             case "air": {
                 StringBuilder builder = new StringBuilder();
@@ -81,7 +108,7 @@ public class ProtoGenerator {
             }
 
             default: {
-                throw new IllegalArgumentException(FileUtils.getFileExtension(path) + " is not a supported file type");
+                throw new IllegalArgumentException(FileUtils.fileExtension(path) + " is not a supported file type");
             }
         }
 

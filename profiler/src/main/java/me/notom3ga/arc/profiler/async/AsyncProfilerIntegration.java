@@ -55,7 +55,8 @@ public class AsyncProfilerIntegration {
         outputFile = Files.createTempFile("arc-", ".jfr.tmp");
         outputFile.toFile().deleteOnExit();
 
-        String output = profiler.execute("start,event=itimer,alloc=8192,interval=5ms,threads,filter,jstackdepth=1024,jfr,file=" + this.outputFile.toString());
+        String output = profiler.execute("start,event=itimer,alloc=8192,interval=" + arc.config().profilingInterval()
+                + "ms,threads,filter,jstackdepth=1024,jfr,file=" + this.outputFile.toString());
         Thread.getAllStackTraces().keySet().forEach(profiler::addThread);
 
         if ((!output.contains("Started ") || !output.contains(" profiling")) && !output.contains("Profiling started")) {

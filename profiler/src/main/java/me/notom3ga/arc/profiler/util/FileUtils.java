@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 public class FileUtils {
 
-    public static String getFileExtension(Path path) {
+    public static String fileExtension(Path path) {
         String name = path.getFileName().toString();
         int lastIndexOf = name.lastIndexOf(".");
         if (lastIndexOf == -1) {

@@ -14,6 +14,7 @@ message Profile {
   message Profiler {
     CPU cpu = 1;
     Memory memory = 2;
+    Graph graph = 3;
 
     message CPU {
       repeated Thread threads = 1;
@@ -45,6 +46,22 @@ message Profile {
           string method = 2;
           uint64 bytes = 3;
           repeated Children children = 4;
+        }
+      }
+    }
+
+    message Graph {
+      repeated Category categories = 1;
+
+      message Category {
+        string name = 1;
+        string data_type = 2;
+        string format = 3;
+        repeated DataPoint data = 4;
+
+        message DataPoint {
+          uint64 time = 1;
+          string data = 2;
         }
       }
     }

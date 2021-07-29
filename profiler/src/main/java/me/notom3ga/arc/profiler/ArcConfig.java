@@ -15,4 +15,10 @@ public interface ArcConfig {
     List<String> configHiddenTokens();
 
     LinkedHashMap<String, String> extraApplicationData();
+
+    default int profilingInterval() {
+        return 5;
+    }
+
+    int graphFrequency();
 }
