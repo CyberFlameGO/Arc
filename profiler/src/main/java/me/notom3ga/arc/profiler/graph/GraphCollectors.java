@@ -37,6 +37,7 @@ public class GraphCollectors {
         }
 
         timer.schedule(new GraphDataTask(), 0, config.graphFrequency());
+        running = true;
     }
 
     public void stop() {
@@ -44,6 +45,7 @@ public class GraphCollectors {
             throw new IllegalStateException("Arc graph data is not currently running.");
         }
 
+        running = false;
         timer.cancel();
     }
 
