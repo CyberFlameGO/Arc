@@ -27,15 +27,12 @@ public class GraphCollectors {
         return this.collectors;
     }
 
-    public void addCollector(GraphCollector collector) {
-        collectors.add(collector);
-    }
-
     public void start(ArcConfig config) {
         if (running) {
             throw new IllegalStateException("Arc graph data is already running.");
         }
 
+        collectors.addAll(config.graphCollectors());
         timer.schedule(new GraphDataTask(), 0, config.graphFrequency());
         running = true;
     }

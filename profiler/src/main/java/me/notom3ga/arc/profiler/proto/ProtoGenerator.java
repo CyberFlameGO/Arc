@@ -80,7 +80,7 @@ public class ProtoGenerator {
             case "air": {
                 StringBuilder builder = new StringBuilder();
                 Files.lines(path, StandardCharsets.UTF_8).forEach(line -> {
-                    if (!line.trim().startsWith("#") && !StringUtils.containsAny(StringUtils.substringBefore(line.trim(), "=")
+                    if (!line.trim().startsWith("#") && StringUtils.containsNone(StringUtils.substringBefore(line.trim(), "=")
                             .trim(), hiddenTokens.toArray(String[]::new))) {
                         if (builder.length() != 0) {
                             builder.append("\n");
@@ -95,7 +95,7 @@ public class ProtoGenerator {
             case "yml": {
                 StringBuilder builder = new StringBuilder();
                 Files.lines(path, StandardCharsets.UTF_8).forEach(line -> {
-                    if (!line.trim().startsWith("#") && !StringUtils.containsAny(StringUtils.substringBefore(line.trim(), ":")
+                    if (!line.trim().startsWith("#") && StringUtils.containsNone(StringUtils.substringBefore(line.trim(), ":")
                             .trim(), hiddenTokens.toArray(String[]::new))) {
                         if (builder.length() != 0) {
                             builder.append("\n");

@@ -19,7 +19,7 @@ public final class Arc {
         this.config = config;
     }
 
-    public final ArcConfig config() {
+    public ArcConfig config() {
         return this.config;
     }
 

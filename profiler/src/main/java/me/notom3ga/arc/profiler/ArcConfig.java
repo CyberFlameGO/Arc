@@ -1,5 +1,7 @@
 package me.notom3ga.arc.profiler;
 
+import me.notom3ga.arc.profiler.graph.GraphCollector;
+
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,4 +23,6 @@ public interface ArcConfig {
     }
 
     int graphFrequency();
+
+    List<GraphCollector> graphCollectors();
 }

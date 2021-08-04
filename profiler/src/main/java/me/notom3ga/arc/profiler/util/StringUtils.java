@@ -2,14 +2,14 @@ package me.notom3ga.arc.profiler.util;
 
 public class StringUtils {
 
-    public static boolean containsAny(String string, String... toCheck) {
+    public static boolean containsNone(String string, String... toCheck) {
         for (String checking : toCheck) {
             if (string.contains(checking)) {
-                return true;
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
     public static String substringBefore(String str, String separator) {
